@@ -1,0 +1,203 @@
+#include "../includes/website.hpp"
+
+Website::Website(char *majorsFile, char *studentsFile,
+                 char *coursesFile, char *professorsFile)
+{
+    read_files(majorsFile, studentsFile,
+               coursesFile, professorsFile);
+    for(auto m : majors){
+        cout << m->get_MID() << "-" << m->get_name() << endl;
+    }
+}
+
+Website::~Website()
+{
+}
+
+void Website::import()
+{
+    string line;
+    while (getline(cin, line))
+    {
+        istringstream iss(line);
+        string method;
+        getline(iss, method, ' ');
+        identify_method(method);
+    }
+}
+
+void Website::identify_method(string method)
+{
+    try
+    {
+        if (method == "GET")
+        {
+        }
+
+        else if (method == "POST")
+        {
+        }
+
+        else if (method == "DELETE")
+        {
+        }
+
+        else if (method == "PUT")
+        {
+        }
+
+        else
+        {
+            throw BadRequest();
+        }
+    }
+
+    catch (BadRequest &be)
+    {
+        cerr << be.what() << endl;
+    }
+}
+
+
+void Website::read_majors(char* majorsFileName)
+{
+    ifstream majorsFile(majorsFileName);
+    if (!majorsFile.is_open())
+        cerr << "Error: Unable to open majorsFile!" << endl;
+    MD major;
+    string line;
+    getline(majorsFile, line);
+    while (getline(majorsFile, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ',');
+        major.MID = token;
+
+        getline(iss, token, ',');
+        major.name = token;
+
+        majors.push_back(new Major(major));
+    }
+}
+
+void Website::read_students(char* studentsFileName)
+{
+    ifstream studentsFile(studentsFileName);
+    if (!studentsFile.is_open())
+        cerr << "Error: Unable to open studentsFile!" << endl;
+    SD student;
+    string line;
+    getline(studentsFile, line);
+    while (getline(studentsFile, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ',');
+        student.SID = token;
+
+        getline(iss, token, ',');
+        student.name = token;
+
+        getline(iss, token, ',');
+        student.majorID = token;
+
+        getline(iss, token, ',');
+        student.semester = token;
+
+        getline(iss, token, ',');
+        student.password = token;
+
+        users.push_back(new Student(student));
+    }
+}
+
+void Website::read_courses(char* coursesFileName)
+{
+    ifstream coursesFile(coursesFileName);
+    if (!coursesFile.is_open())
+        cerr << "Error: Unable to open coursesFile!" << endl;
+    CD course;
+    string line;
+    getline(coursesFile, line);
+    while (getline(coursesFile, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ',');
+        course.CID = token;
+
+        getline(iss, token, ',');
+        course.name = token;
+
+        getline(iss, token, ',');
+        course.credit = token;
+
+        getline(iss, token, ',');
+        course.prereq = token;
+
+        getline(iss, token, ',');
+        course.majors_id = split(token, ';');
+
+        courses.push_back(new Course(course));
+    }
+}
+
+void Website::read_professors(char* professorsFileName)
+{
+    ifstream professorsFile(professorsFileName);
+    if (!professorsFile.is_open())
+        cerr << "Error: Unable to open professorsFile!" << endl;
+    PD prof;
+    string line;
+    getline(professorsFile, line);
+    while (getline(professorsFile, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ',');
+        prof.PID = token;
+
+        getline(iss, token, ',');
+        prof.name = token;
+
+        getline(iss, token, ',');
+        prof.majorID =token;
+
+        getline(iss, token, ',');
+        prof.position = token;
+
+        getline(iss, token, ',');
+        prof.password = token;
+
+        users.push_back(new Professor(prof));
+    }
+}
+
+vector<string> Website::split(const string &str, const char delim)
+{
+    vector<string> strings;
+    string::size_type pos = 0;
+    string::size_type prev = 0;
+
+    while ((pos = str.find(delim, prev)) != string::npos)
+    {
+        strings.push_back(str.substr(prev, pos - prev));
+        prev = pos + sizeof(char);
+    }
+    strings.push_back(str.substr(prev));
+    return strings;
+}
+
+void Website::read_files(char *majorsFile, char *studentsFile,
+                         char *coursesFile, char *professorsFile)
+{
+    read_majors(majorsFile);
+    read_students(studentsFile);
+    read_courses(coursesFile);
+    read_professors(professorsFile);
+}
