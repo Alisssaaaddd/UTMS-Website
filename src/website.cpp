@@ -5,9 +5,10 @@ Website::Website(char *majorsFile, char *studentsFile,
 {
     read_files(majorsFile, studentsFile,
                coursesFile, professorsFile);
-    for(auto m : majors){
-        cout << m->get_MID() << "-" << m->get_name() << endl;
-    }
+    methods.push_back(new Post());
+    methods.push_back(new Put());
+    methods.push_back(new Get());
+    methods.push_back(new Delete());
 }
 
 Website::~Website()
@@ -20,30 +21,66 @@ void Website::import()
     while (getline(cin, line))
     {
         istringstream iss(line);
-        string method;
-        getline(iss, method, ' ');
-        identify_method(method);
+        identify_method(line);
     }
 }
 
-void Website::identify_method(string method)
+void Website::identify_method(string& line)
 {
+    istringstream iss(line);
+    string method;
+    iss >> method;
+    size_t i = line.find(method);
+    line = line.substr(i+method.length()+1);
+
     try
     {
         if (method == "GET")
         {
+            for (auto m : methods)
+            {
+                Get *g = dynamic_cast<Get *>(m);
+                if (g)
+                {
+                    // g->identify_command(line, users);
+                }
+            }
         }
 
         else if (method == "POST")
         {
+            for (auto m : methods)
+            {
+                Post *post = dynamic_cast<Post *>(m);
+                if (post)
+                {
+                    post->identify_command(line, users, currentUser);
+                }
+            }
         }
 
         else if (method == "DELETE")
         {
+            for (auto m : methods)
+            {
+                Delete *del = dynamic_cast<Delete *>(m);
+                if (del)
+                {
+                    // del->identify_command(line, users);
+                }
+            }
         }
 
         else if (method == "PUT")
         {
+            for (auto m : methods)
+            {
+                Put *put = dynamic_cast<Put *>(m);
+                if (put)
+                {
+                    // put->identify_command(line, users);
+                }
+            }
         }
 
         else
@@ -52,14 +89,25 @@ void Website::identify_method(string method)
         }
     }
 
-    catch (BadRequest &be)
+    catch (BadRequest &br)
     {
-        cerr << be.what() << endl;
+        cerr << br.what() << endl;
+    }
+
+    catch (Absence &a){
+        cerr << a.what() << endl;
+    }
+
+    catch (EmptyException &ee){
+        cerr << ee.what() << endl;
+    }
+
+    catch (Inaccessibility &ie){
+        cerr << ie.what() << endl;
     }
 }
 
-
-void Website::read_majors(char* majorsFileName)
+void Website::read_majors(char *majorsFileName)
 {
     ifstream majorsFile(majorsFileName);
     if (!majorsFile.is_open())
@@ -82,7 +130,7 @@ void Website::read_majors(char* majorsFileName)
     }
 }
 
-void Website::read_students(char* studentsFileName)
+void Website::read_students(char *studentsFileName)
 {
     ifstream studentsFile(studentsFileName);
     if (!studentsFile.is_open())
@@ -114,7 +162,7 @@ void Website::read_students(char* studentsFileName)
     }
 }
 
-void Website::read_courses(char* coursesFileName)
+void Website::read_courses(char *coursesFileName)
 {
     ifstream coursesFile(coursesFileName);
     if (!coursesFile.is_open())
@@ -146,7 +194,7 @@ void Website::read_courses(char* coursesFileName)
     }
 }
 
-void Website::read_professors(char* professorsFileName)
+void Website::read_professors(char *professorsFileName)
 {
     ifstream professorsFile(professorsFileName);
     if (!professorsFile.is_open())
@@ -166,7 +214,7 @@ void Website::read_professors(char* professorsFileName)
         prof.name = token;
 
         getline(iss, token, ',');
-        prof.majorID =token;
+        prof.majorID = token;
 
         getline(iss, token, ',');
         prof.position = token;

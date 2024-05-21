@@ -1,26 +1,43 @@
 #include "../includes/user.hpp"
 
 User::User(){
-    
+    is_signed_in = false;
 };
 
-User::~User(){
-
+User::~User()
+{
 }
 
-Student::Student(SD student) : User() {
+string User::get_id() { return ID; };
+string User::get_name() { return name; };
+string User::get_majorID() { return majorID; };
+string User::get_password() { return password; };
+bool User::signed_in() { return is_signed_in; };
+
+void User::login(){
+    is_signed_in = true;
+}
+
+void User::logout(){
+    is_signed_in = false;
+}
+
+Student::Student(SD student) : User()
+{
     ID = student.SID;
     name = student.name;
     majorID = student.majorID;
     password = student.password;
     semester = student.semester;
+    is_signed_in = false;
 }
 
-Student::~Student(){
-
+Student::~Student()
+{
 }
 
-Professor::Professor(PD professor): User() {
+Professor::Professor(PD professor) : User()
+{
     ID = professor.PID;
     name = professor.name;
     majorID = professor.majorID;
@@ -28,17 +45,18 @@ Professor::Professor(PD professor): User() {
     position = professor.position;
 }
 
-Professor::~Professor(){
-
+Professor::~Professor()
+{
 }
 
-Manager::Manager() : User() {
+Manager::Manager() : User()
+{
     ID = MANAGER_ID;
     name = MANAGER_NAME;
     majorID = MANAGER_MAJOR_ID;
     password = MANAGER_PASSWORD;
 }
 
-Manager::~Manager(){
-    
+Manager::~Manager()
+{
 }

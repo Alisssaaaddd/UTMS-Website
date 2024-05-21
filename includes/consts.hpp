@@ -49,7 +49,7 @@ typedef struct CourseData
 struct Argument
 {
     string title;
-    string content;
+    string key;
 };
 
 const string MAJORS_FILE_PATH = "./files/majors.csv",

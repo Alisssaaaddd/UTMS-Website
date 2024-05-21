@@ -8,10 +8,18 @@ class User{
         string name;
         string majorID;
         string password;
+        bool is_signed_in;
 
     public:
         User();
         ~User();
+        string get_id();
+        string get_name();
+        string get_majorID();
+        string get_password();
+        bool signed_in();
+        void login();
+        void logout();
 };
 
 

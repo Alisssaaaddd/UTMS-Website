@@ -5,8 +5,10 @@
 
 class Post : public Method {
     private:
-
+    
     public:
     Post();
     ~Post();
+    void identify_command(string line, vector<User*> &users, User* &currentUser);
+    void login(Argument id, Argument password, vector<User*> &users, User* &currentUser);
 };
