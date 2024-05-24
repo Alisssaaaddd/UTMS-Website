@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../includes/consts.hpp"
+#include "../includes/lesson.hpp"
 
 class User{
     protected:
@@ -9,6 +10,8 @@ class User{
         string majorID;
         string password;
         bool is_signed_in;
+        vector<Notification* > notifs;
+        vector<Lesson*> activeLessons;
 
     public:
         User();
@@ -20,6 +23,8 @@ class User{
         bool signed_in();
         void login();
         void logout();
+        virtual void test();
+        bool does_interfere(string startTime);
 };
 
 
@@ -30,6 +35,7 @@ class Student : public User{
     public:
         Student(SD student);
         ~Student();
+        void test();
 };
 
 class Professor : public User{
@@ -39,6 +45,7 @@ class Professor : public User{
     public:
         Professor(PD professor);
         ~Professor();
+        void test();
 };
 
 class Manager : public User{
@@ -47,4 +54,5 @@ class Manager : public User{
     public:
         Manager();
         ~Manager();
+        void test();
 };

@@ -22,6 +22,19 @@ void User::logout(){
     is_signed_in = false;
 }
 
+void User::test(){
+
+}
+
+bool User::does_interfere(string startTime){
+    for(Lesson* l : activeLessons){
+        if(l->get_end_time()>stoi(startTime)){
+            return true;
+        }
+    }
+    return false;
+}
+
 Student::Student(SD student) : User()
 {
     ID = student.SID;
@@ -36,6 +49,11 @@ Student::~Student()
 {
 }
 
+void Student::test(){
+
+}
+
+
 Professor::Professor(PD professor) : User()
 {
     ID = professor.PID;
@@ -49,6 +67,10 @@ Professor::~Professor()
 {
 }
 
+void Professor::test(){
+
+}
+
 Manager::Manager() : User()
 {
     ID = MANAGER_ID;
@@ -59,4 +81,8 @@ Manager::Manager() : User()
 
 Manager::~Manager()
 {
+}
+
+void Manager::test(){
+
 }

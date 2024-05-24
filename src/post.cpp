@@ -16,7 +16,8 @@ void Post::login(Argument id, Argument password, vector<User *> &users, User *&c
     {
         if (!u->signed_in())
         {
-            if (u->get_id() == id.key and u->get_password() == password.key)
+            if (u->get_id() == id.key and u->get_password() == password.key ||
+                u->get_id() == MANAGER_ID and u->get_password() == MANAGER_PASSWORD)
             {
                 id_found = true;
                 password_found = true;
@@ -46,7 +47,8 @@ void Post::login(Argument id, Argument password, vector<User *> &users, User *&c
     cout << "OK" << endl;
 }
 
-void Post::identify_command(string line, vector<User *> &users, User *&currentUser)
+void Post::identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
+                            vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors)
 {
     istringstream iss(line);
     string command;
@@ -54,7 +56,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
     size_t i = line.find("?");
     if (i != string::npos)
     {
-        line = line.substr(i + 1);
+        line = line.substr(i + 2);
     }
 
     else
@@ -84,7 +86,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
             password.key = key;
 
             iss2 >> end;
-            if (end != "")
+            if (end != EMPTY)
                 throw BadRequest();
         }
 
@@ -100,7 +102,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
             id.key = key;
 
             iss2 >> end;
-            if (end != "")
+            if (end != EMPTY)
                 throw BadRequest();
         }
 
@@ -113,6 +115,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
     else if (command == "logout")
     {
+        logout(currentUser);
     }
 
     else if (command == "post")
@@ -125,10 +128,209 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
     else if (command == "course_offer")
     {
+        vector<string> parts = split(line, SPACE);
+        LessonStruct lesson;
+        lesson.lessonID = lessonID_;
+
+        if (parts.size() != 12)
+        {
+            throw BadRequest();
+        }
+
+        for (int i = 0; i < parts.size(); i += 2)
+        {
+            if (parts[i] == "course_id")
+            {
+                lesson.courseId = parts[i + 1];
+            }
+
+            else if (parts[i] == "professor_id")
+            {
+                lesson.profId = parts[i + 1];
+            }
+
+            else if (parts[i] == "capacity")
+            {
+                lesson.capacity = parts[i + 1];
+            }
+
+            else if (parts[i] == "time")
+            {
+                lesson.weekDay = parts[i + 1];
+                vector<string> timeParts = split(lesson.weekDay, ':');
+                lesson.weekDay = timeParts[0];
+                vector<string> hourParts = split(timeParts[1], '-');
+                lesson.startTime = hourParts[0];
+                lesson.endTime = hourParts[1];
+            }
+
+            else if (parts[i] == "exam_date")
+            {
+                lesson.date = parts[i + 1];
+            }
+
+            else if (parts[i] == "class_number")
+            {
+                lesson.classNumber = parts[i + 1];
+            }
+        }
+        course_offer(lesson, lessonID_, currentUser, lessons, courses, majors, users);
     }
 
     else
     {
         throw Absence();
+    }
+}
+
+void Post::logout(User *&currentUser)
+{
+    if (currentUser != nullptr)
+    {
+        currentUser->logout();
+        currentUser = nullptr;
+        cout << "OK" << endl;
+    }
+    else
+    {
+        throw Inaccessibility();
+    }
+}
+
+void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, vector<Lesson *> &lessons,
+                        vector<Course *> &courses, vector<Major *> &majors, vector<User *> &users)
+{
+    Manager *UTaccount = dynamic_cast<Manager *>(currentUser);
+    if (UTaccount)
+    {
+        // cout << "course: " << course_exists(lesson.courseId, courses) << endl;
+        // cout << "user: " << user_exists(lesson.profId, users) << endl;
+        if (!course_exists(lesson.courseId, courses) || !user_exists(lesson.profId, users))
+        {
+            cout << "Vojood Nadare!" << endl;
+            throw Absence();
+        }
+
+        if (!can_convert_to_int(lesson.courseId) || !can_convert_to_int(lesson.profId) ||
+            !can_convert_to_int(lesson.capacity) || !can_convert_to_int(lesson.classNumber))
+        {
+            cout << "Adad Nist!" << endl;
+            throw BadRequest();
+        }
+
+        if (!is_prof(lesson.profId, users))
+        {
+            cout << "Ostad Nist!" << endl;
+            throw Inaccessibility();
+        }
+
+        if(!is_major_valid(users, majors)){
+            cout << "Reshte kharab!" << endl;
+            throw Inaccessibility();
+        }
+
+        User* chosenProf = find_user_by_id(lesson.profId, users);
+        if(chosenProf->does_interfere(lesson.startTime)){
+            cout << "Tadakghod Dare" << endl;
+            throw Inaccessibility();
+        }
+
+        cout << "OK" << endl;
+
+        // send notification of a new lesson to all users of the website and add the lesson to folder of all of them
+        
+
+        lessons.push_back(new Lesson(lesson, lessonID));
+    }
+
+    else
+    {
+        throw Inaccessibility();
+    }
+}
+
+bool Post::course_exists(string courseId, vector<Course *> courses)
+{
+    for (Course *c : courses)
+    {
+        if (c->get_CID() == courseId)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Post::user_exists(string userId, vector<User *> users)
+{
+    for (User *u : users)
+    {
+        if (u->get_id() == userId)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Post::is_prof(string userId, vector<User *> users)
+{
+    for (User *u : users)
+    {
+        if (u->get_id() == userId)
+        {
+            Professor *prof = dynamic_cast<Professor *>(u);
+            if (prof)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Post::can_convert_to_int(const std::string &str)
+{
+    try
+    {
+        size_t pos;
+        std::stoi(str, &pos);
+
+        // Check if the entire string was converted to an integer
+        if (pos == str.length())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    catch (const std::exception &)
+    {
+        return false;
+    }
+}
+
+bool Post::is_major_valid(vector<User *> users, vector<Major *> majors){
+    for(User* u: users){
+        for(Major* m: majors){
+            if(u->get_majorID()==m->get_MID()){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+User* Post::find_user_by_id(string id, vector<User*> users){
+    for(User* u: users){
+        if(u->get_id()==id){
+            return u;
+        }
     }
 }

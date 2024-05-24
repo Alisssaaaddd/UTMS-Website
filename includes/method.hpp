@@ -12,4 +12,5 @@ class Method{
     Method();
     ~Method();
     virtual void identify_command(string command, vector<User*> users, User* &currentUser);
+    vector<string> split(const string &str, const char delim);
 };

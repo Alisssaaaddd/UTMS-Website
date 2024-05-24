@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <exception>
 
+#include "../includes/date.hpp"
+
 using namespace std;
 
 typedef struct StudentData
@@ -52,16 +54,45 @@ struct Argument
     string key;
 };
 
+struct Time
+{
+    string weekDay;
+    string startTime;
+    string endTime;
+};
+
+struct LessonStruct
+{
+    string courseName;
+    string profName;
+    string courseId;
+    string profId;
+    string capacity;
+    string weekDay;
+    string startTime;
+    string endTime;
+    string date;
+    string classNumber;
+    int lessonID;   
+};
+
+struct Notification{
+    string test;
+    string salam;
+};
+
+
 const string MAJORS_FILE_PATH = "./files/majors.csv",
              STUDENTS_FILE_PATH = "./files/students.csv",
              COURSES_FILE_PATH = "./files/courses.csv",
              PROFESSORS_FILE_PATH = "./files/professors.csv";
 
-const string COMMA = ",",
-             SEMI_COLON = ";",
-             EMPTY = "";
+const char COMMA = ',',
+           SEMI_COLON = ';',
+           SPACE = ' ';
+const string EMPTY = "";
 
 const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";
 const string MANAGER_NAME = "defaultUser";
-const int MANAGER_MAJOR_ID = -1;
+const string MANAGER_MAJOR_ID = "managerMajorId";

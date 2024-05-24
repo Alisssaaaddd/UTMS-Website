@@ -9,6 +9,9 @@ Website::Website(char *majorsFile, char *studentsFile,
     methods.push_back(new Put());
     methods.push_back(new Get());
     methods.push_back(new Delete());
+    users.push_back(new Manager());
+
+    lessonID = 1;
 }
 
 Website::~Website()
@@ -54,7 +57,7 @@ void Website::identify_method(string& line)
                 Post *post = dynamic_cast<Post *>(m);
                 if (post)
                 {
-                    post->identify_command(line, users, currentUser);
+                    post->identify_command(line, users, currentUser, lessonID, lessons, courses, majors);
                 }
             }
         }

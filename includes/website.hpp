@@ -10,6 +10,7 @@
 #include "../includes/get.hpp"
 #include "../includes/delete.hpp"
 #include "../includes/put.hpp"
+#include "../includes/lesson.hpp"
 
 class Website
 {
@@ -18,7 +19,9 @@ private:
     vector<Course *> courses;
     vector<Major *> majors;
     vector<Method *> methods;
+    vector<Lesson* > lessons; 
     User *currentUser;
+    int lessonID;
 
 public:
     Website(char *majorsfile, char *studentsFile,
