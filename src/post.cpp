@@ -127,25 +127,23 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
         if (title1 == "title")
         {
-            size_t i = line.find(DOUNLE_QUOTATION);
+            size_t i = line.find(DOUBLE_QUOTATION);
             line = line.substr(i + 1);
-            cout << "line Jadid: " << line << endl;
             istringstream iss3(line);
             string temp;
-            getline(iss3, temp, DOUNLE_QUOTATION);
+            getline(iss3, temp, DOUBLE_QUOTATION);
             post.title = temp;
-            i = line.find(DOUNLE_QUOTATION);
+            i = line.find(DOUBLE_QUOTATION);
             line = line.substr(i + 1);
 
             istringstream iss4(line);
             iss4 >> temp;
             if (temp == "message")
             {
-                i = line.find(DOUNLE_QUOTATION);
+                i = line.find(DOUBLE_QUOTATION);
                 line = line.substr(i + 1);
-                cout << "line Jadid: " << line << endl;
                 istringstream iss5(line);
-                getline(iss5, temp, DOUNLE_QUOTATION);
+                getline(iss5, temp, DOUBLE_QUOTATION);
                 post.message = temp;
             }
             else
@@ -156,23 +154,23 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
         else if (title1 == "message")
         {
-            size_t i = line.find(DOUNLE_QUOTATION);
+            size_t i = line.find(DOUBLE_QUOTATION);
             line = line.substr(i + 1);
             istringstream iss3(line);
             string temp;
-            getline(iss3, temp, DOUNLE_QUOTATION);
+            getline(iss3, temp, DOUBLE_QUOTATION);
             post.message = temp;
-            i = line.find(DOUNLE_QUOTATION);
+            i = line.find(DOUBLE_QUOTATION);
             line = line.substr(i + 1);
 
             istringstream iss4(line);
             iss4 >> temp;
             if (temp == "title")
             {
-                i = line.find(DOUNLE_QUOTATION);
+                i = line.find(DOUBLE_QUOTATION);
                 line = line.substr(i + 1);
                 istringstream iss5(line);
-                getline(iss5, temp, DOUNLE_QUOTATION);
+                getline(iss5, temp, DOUBLE_QUOTATION);
                 post.title = temp;
             }
             else
@@ -189,7 +187,6 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
         post.id = currentUser->get_postID();
         currentUser->add_post(post);
         cout << "OK" << endl;
-        cout << post.id << " " << post.title << " " << post.message << endl;
     }
 
     else if (command == "connect")
@@ -291,8 +288,6 @@ void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, 
     Manager *UTaccount = dynamic_cast<Manager *>(currentUser);
     if (UTaccount)
     {
-        // cout << "course: " << course_exists(lesson.courseId, courses) << endl;
-        // cout << "user: " << user_exists(lesson.profId, users) << endl;
         if (!can_convert_to_int(lesson.courseId) || !can_convert_to_int(lesson.profId) ||
             !can_convert_to_int(lesson.capacity) || !can_convert_to_int(lesson.classNumber))
         {
@@ -346,18 +341,6 @@ bool Post::course_exists(string courseId, vector<Course *> courses)
     return false;
 }
 
-bool Post::user_exists(string userId, vector<User *> users)
-{
-    for (User *u : users)
-    {
-        if (u->get_id() == userId)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 bool Post::is_prof(string userId, vector<User *> users)
 {
@@ -375,6 +358,7 @@ bool Post::is_prof(string userId, vector<User *> users)
 
     return false;
 }
+
 
 bool Post::is_major_valid(vector<User *> users, vector<Major *> majors)
 {

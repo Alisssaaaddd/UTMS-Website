@@ -83,3 +83,16 @@ bool Method::lesson_exists(int lessonID, vector<Lesson* > &lessons){
     
     return false;
 }
+
+bool Method::user_exists(string userId, vector<User *> users)
+{
+    for (User *u : users)
+    {
+        if (u->get_id() == userId)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

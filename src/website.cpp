@@ -9,7 +9,7 @@ Website::Website(char *majorsFile, char *studentsFile,
     methods.push_back(new Put());
     methods.push_back(new Get());
     methods.push_back(new Delete());
-    users.push_back(new Manager());
+    users.push_back(new Manager(manager_major));
 
     lessonId_current = 1;
 }
@@ -28,13 +28,13 @@ void Website::import()
     }
 }
 
-void Website::identify_method(string& line)
+void Website::identify_method(string &line)
 {
     istringstream iss(line);
     string method;
     iss >> method;
     size_t i = line.find(method);
-    line = line.substr(i+method.length()+1);
+    line = line.substr(i + method.length() + 1);
 
     try
     {
@@ -69,7 +69,7 @@ void Website::identify_method(string& line)
                 Delete *del = dynamic_cast<Delete *>(m);
                 if (del)
                 {
-                    // del->identify_command(line, users);
+                    del->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
@@ -97,15 +97,18 @@ void Website::identify_method(string& line)
         cerr << br.what() << endl;
     }
 
-    catch (Absence &a){
+    catch (Absence &a)
+    {
         cerr << a.what() << endl;
     }
 
-    catch (EmptyException &ee){
+    catch (EmptyException &ee)
+    {
         cerr << ee.what() << endl;
     }
 
-    catch (Inaccessibility &ie){
+    catch (Inaccessibility &ie)
+    {
         cerr << ie.what() << endl;
     }
 }
@@ -154,6 +157,7 @@ void Website::read_students(char *studentsFileName)
 
         getline(iss, token, ',');
         student.majorID = token;
+        MD studentMajor = find_MajorData_by_id(student.majorID);
 
         getline(iss, token, ',');
         student.semester = token;
@@ -161,7 +165,7 @@ void Website::read_students(char *studentsFileName)
         getline(iss, token, ',');
         student.password = token;
 
-        users.push_back(new Student(student));
+        users.push_back(new Student(student, studentMajor));
     }
 }
 
@@ -218,6 +222,7 @@ void Website::read_professors(char *professorsFileName)
 
         getline(iss, token, ',');
         prof.majorID = token;
+        MD profMajor = find_MajorData_by_id(prof.majorID);
 
         getline(iss, token, ',');
         prof.position = token;
@@ -225,7 +230,7 @@ void Website::read_professors(char *professorsFileName)
         getline(iss, token, ',');
         prof.password = token;
 
-        users.push_back(new Professor(prof));
+        users.push_back(new Professor(prof, profMajor));
     }
 }
 
@@ -251,4 +256,16 @@ void Website::read_files(char *majorsFile, char *studentsFile,
     read_students(studentsFile);
     read_courses(coursesFile);
     read_professors(professorsFile);
+}
+
+MD Website::find_MajorData_by_id(string userMajorId)
+{
+    MD major;
+    for(Major* m: majors){
+        if(m->get_MID()==userMajorId){
+            major.MID = m->get_MID();
+            major.name = m->get_name();
+        }
+    }
+    return major;
 }

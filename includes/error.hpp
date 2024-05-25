@@ -2,8 +2,8 @@
 
 #include "../includes/consts.hpp"
 
-class Absence : public runtime_error
-{
+
+class Absence : public runtime_error{
 private:
 public:
     Absence();
@@ -11,8 +11,7 @@ public:
     const char *what();
 };
 
-class EmptyException : public runtime_error
-{
+class EmptyException : public runtime_error{
 private:
 public:
     EmptyException();
@@ -20,8 +19,7 @@ public:
     const char *what();
 };
 
-class BadRequest : public runtime_error
-{
+class BadRequest : public runtime_error{
 private:
 public:
     BadRequest();
@@ -29,8 +27,7 @@ public:
     const char *what();
 };
 
-class Inaccessibility : public runtime_error
-{
+class Inaccessibility : public runtime_error{
 private:
 public:
     Inaccessibility();

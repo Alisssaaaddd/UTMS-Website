@@ -17,7 +17,6 @@ public:
     void course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, vector<Lesson *> &lessons,
                       vector<Course *> &courses, vector<Major *> &majors, vector<User *> &users);
     bool course_exists(string courseId, vector<Course *> courses);
-    bool user_exists(string userId, vector<User *> users);
     bool is_prof(string userId, vector<User *> users);
     bool is_major_valid(vector<User *> users, vector<Major *> majors);
 };

@@ -39,19 +39,23 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
 
         else
         {
-            if(title=="id"){
-                if(!can_convert_to_int(key)){
+            if (title == "id")
+            {
+                if (!can_convert_to_int(key))
+                {
                     throw BadRequest();
                 }
 
-                if(!lesson_exists(stoi(key), lessons)){
+                if (!lesson_exists(stoi(key), lessons))
+                {
                     throw Absence();
                 }
 
-                Lesson* chosenLesson = find_lesson_by_id(lessons, key);
+                Lesson *chosenLesson = find_lesson_by_id(lessons, key);
                 chosenLesson->show_detailed();
             }
-            else{
+            else
+            {
                 throw BadRequest();
             }
         }
@@ -59,6 +63,34 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
 
     else if (command == "personal_page")
     {
+        if (line == EMPTY)
+        {
+            throw BadRequest();
+        }
+
+        else
+        {
+            if (title == "id")
+            {
+                if (!can_convert_to_int(key))
+                {
+                    throw BadRequest();
+                }
+
+                if (!user_exists(key, users))
+                {
+                    throw Absence();
+                }
+
+                User* chosenUser = find_user_by_id(key, users);
+                chosenUser->show_personal_page();
+            }
+
+            else
+            {
+                throw BadRequest();
+            }
+        }
     }
 
     else if (command == "post")

@@ -1,0 +1,1 @@
+{"date":"2024-05-25T13:56:37.899Z","courseId":"17","assignment":"AP-Spring03-CA6","trace":{"version":37,"content":"#include \"../includes/delete.hpp\"\n\nDelete::Delete() : Method() {\n\n}\n\nDelete::~Delete(){\n\n}\n\n\n\n","filename":"/home/ali3ad3ghi/project6-f1/UTMS-Website/src/delete.cpp","identifier":"Text Change","lineCount":13,"languageId":"cpp"},"failed":false}

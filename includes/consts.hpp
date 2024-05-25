@@ -104,6 +104,6 @@ const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";
 const string MANAGER_NAME = "defaultUser";
 const string MANAGER_MAJOR_ID = "managerMajorId";
-const char DOUNLE_QUOTATION = '"';
+const char DOUBLE_QUOTATION = '"';
 
 

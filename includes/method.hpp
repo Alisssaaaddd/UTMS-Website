@@ -21,4 +21,5 @@ public:
     Lesson* find_lesson_by_id(vector<Lesson *> &Lessons, string lessonID);
     bool can_convert_to_int(const std::string &str);
     bool lesson_exists(int lessonID, vector<Lesson* > &lessons);
+    bool user_exists(string userId, vector<User *> users);
 };

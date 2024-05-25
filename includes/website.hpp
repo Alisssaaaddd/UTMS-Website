@@ -22,6 +22,7 @@ private:
     vector<Lesson* > lessons; 
     User *currentUser;
     int lessonId_current;
+    MD manager_major;
 
 public:
     Website(char *majorsfile, char *studentsFile,
@@ -37,4 +38,5 @@ public:
     void read_professors(char *professorsFileName);
     vector<string> split(const string &str, const char delim);
     void identify_method(string &method);
+    MD find_MajorData_by_id(string userMajorId);
 };
