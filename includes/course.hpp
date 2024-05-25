@@ -16,7 +16,9 @@ class Course{
     
 
     string get_CID();
-
+    string get_name();
+    string get_credit();
+    string get_prereq();
 };
 
 

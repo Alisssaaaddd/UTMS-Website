@@ -29,6 +29,9 @@ public:
     int get_end_time();
     int get_class_num();
     string get_date();
+    int get_lessonID();
+    void show();
+    void show_detailed();
 };
 
 

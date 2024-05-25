@@ -2,6 +2,7 @@
 
 User::User(){
     is_signed_in = false;
+    postID = 1;
 };
 
 User::~User()
@@ -13,6 +14,7 @@ string User::get_name() { return name; };
 string User::get_majorID() { return majorID; };
 string User::get_password() { return password; };
 bool User::signed_in() { return is_signed_in; };
+int User::get_postID() {return postID;};
 
 void User::login(){
     is_signed_in = true;
@@ -35,6 +37,15 @@ bool User::does_interfere(string startTime){
     return false;
 }
 
+void User::add_lesson(Lesson* &newLesson){
+    activeLessons.push_back(newLesson);
+}
+
+void User::add_post(PostStruct post){
+    posts.push_back(post);
+    postID++;
+}
+
 Student::Student(SD student) : User()
 {
     ID = student.SID;
@@ -42,7 +53,6 @@ Student::Student(SD student) : User()
     majorID = student.majorID;
     password = student.password;
     semester = student.semester;
-    is_signed_in = false;
 }
 
 Student::~Student()

@@ -11,7 +11,7 @@ Website::Website(char *majorsFile, char *studentsFile,
     methods.push_back(new Delete());
     users.push_back(new Manager());
 
-    lessonID = 1;
+    lessonId_current = 1;
 }
 
 Website::~Website()
@@ -45,7 +45,7 @@ void Website::identify_method(string& line)
                 Get *g = dynamic_cast<Get *>(m);
                 if (g)
                 {
-                    // g->identify_command(line, users);
+                    g->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
@@ -57,7 +57,7 @@ void Website::identify_method(string& line)
                 Post *post = dynamic_cast<Post *>(m);
                 if (post)
                 {
-                    post->identify_command(line, users, currentUser, lessonID, lessons, courses, majors);
+                    post->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }

@@ -2,13 +2,16 @@
 
 #include "../includes/consts.hpp"
 #include "../includes/method.hpp"
+#include "../includes/major.hpp"
 
-
-class Get : public Method {
-    private:
-
-    public:
-        Get();
-        ~Get();
-
+class Get : public Method
+{
+private:
+public:
+    Get();
+    ~Get();
+    void show_all_lessons(vector<Lesson *> &lessons, vector<Course* > &courses);
+    void identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
+                            vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors);
+    
 };

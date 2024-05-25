@@ -21,7 +21,7 @@ private:
     vector<Method *> methods;
     vector<Lesson* > lessons; 
     User *currentUser;
-    int lessonID;
+    int lessonId_current;
 
 public:
     Website(char *majorsfile, char *studentsFile,

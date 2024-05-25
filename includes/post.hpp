@@ -19,8 +19,5 @@ public:
     bool course_exists(string courseId, vector<Course *> courses);
     bool user_exists(string userId, vector<User *> users);
     bool is_prof(string userId, vector<User *> users);
-    bool can_convert_to_int(const std::string &str);
     bool is_major_valid(vector<User *> users, vector<Major *> majors);
-    void activate_for_prof();
-    User* find_user_by_id(string id, vector<User*> users);
 };

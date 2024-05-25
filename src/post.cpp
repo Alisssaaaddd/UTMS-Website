@@ -110,6 +110,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
         {
             throw BadRequest();
         }
+
         login(id, password, users, currentUser);
     }
 
@@ -120,6 +121,75 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
     else if (command == "post")
     {
+        PostStruct post;
+        string title1;
+        iss2 >> title1;
+
+        if (title1 == "title")
+        {
+            size_t i = line.find(DOUNLE_QUOTATION);
+            line = line.substr(i + 1);
+            cout << "line Jadid: " << line << endl;
+            istringstream iss3(line);
+            string temp;
+            getline(iss3, temp, DOUNLE_QUOTATION);
+            post.title = temp;
+            i = line.find(DOUNLE_QUOTATION);
+            line = line.substr(i + 1);
+
+            istringstream iss4(line);
+            iss4 >> temp;
+            if (temp == "message")
+            {
+                i = line.find(DOUNLE_QUOTATION);
+                line = line.substr(i + 1);
+                cout << "line Jadid: " << line << endl;
+                istringstream iss5(line);
+                getline(iss5, temp, DOUNLE_QUOTATION);
+                post.message = temp;
+            }
+            else
+            {
+                throw BadRequest();
+            }
+        }
+
+        else if (title1 == "message")
+        {
+            size_t i = line.find(DOUNLE_QUOTATION);
+            line = line.substr(i + 1);
+            istringstream iss3(line);
+            string temp;
+            getline(iss3, temp, DOUNLE_QUOTATION);
+            post.message = temp;
+            i = line.find(DOUNLE_QUOTATION);
+            line = line.substr(i + 1);
+
+            istringstream iss4(line);
+            iss4 >> temp;
+            if (temp == "title")
+            {
+                i = line.find(DOUNLE_QUOTATION);
+                line = line.substr(i + 1);
+                istringstream iss5(line);
+                getline(iss5, temp, DOUNLE_QUOTATION);
+                post.title = temp;
+            }
+            else
+            {
+                throw BadRequest();
+            }
+        }
+
+        else
+        {
+            throw BadRequest();
+        }
+
+        post.id = currentUser->get_postID();
+        currentUser->add_post(post);
+        cout << "OK" << endl;
+        cout << post.id << " " << post.title << " " << post.message << endl;
     }
 
     else if (command == "connect")
@@ -141,12 +211,30 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
         {
             if (parts[i] == "course_id")
             {
-                lesson.courseId = parts[i + 1];
+                if (course_exists(parts[i + 1], courses))
+                {
+                    lesson.courseId = parts[i + 1];
+                    Course *relatedCourse = find_course_by_id(courses, lesson.courseId);
+                    lesson.courseName = relatedCourse->get_name();
+                }
+                else
+                {
+                    throw Absence();
+                }
             }
 
             else if (parts[i] == "professor_id")
             {
-                lesson.profId = parts[i + 1];
+                if (user_exists(parts[i + 1], users))
+                {
+                    lesson.profId = parts[i + 1];
+                    User *prof = find_user_by_id(lesson.profId, users);
+                    lesson.profName = prof->get_name();
+                }
+                else
+                {
+                    throw Absence();
+                }
             }
 
             else if (parts[i] == "capacity")
@@ -205,12 +293,6 @@ void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, 
     {
         // cout << "course: " << course_exists(lesson.courseId, courses) << endl;
         // cout << "user: " << user_exists(lesson.profId, users) << endl;
-        if (!course_exists(lesson.courseId, courses) || !user_exists(lesson.profId, users))
-        {
-            cout << "Vojood Nadare!" << endl;
-            throw Absence();
-        }
-
         if (!can_convert_to_int(lesson.courseId) || !can_convert_to_int(lesson.profId) ||
             !can_convert_to_int(lesson.capacity) || !can_convert_to_int(lesson.classNumber))
         {
@@ -224,23 +306,25 @@ void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, 
             throw Inaccessibility();
         }
 
-        if(!is_major_valid(users, majors)){
+        if (!is_major_valid(users, majors))
+        {
             cout << "Reshte kharab!" << endl;
             throw Inaccessibility();
         }
 
-        User* chosenProf = find_user_by_id(lesson.profId, users);
-        if(chosenProf->does_interfere(lesson.startTime)){
+        User *chosenProf = find_user_by_id(lesson.profId, users);
+        if (chosenProf->does_interfere(lesson.startTime))
+        {
             cout << "Tadakghod Dare" << endl;
             throw Inaccessibility();
         }
 
         cout << "OK" << endl;
+        Lesson *newLesson = new Lesson(lesson, lessonID);
+        lessons.push_back(newLesson);
+        chosenProf->add_lesson(newLesson);
 
         // send notification of a new lesson to all users of the website and add the lesson to folder of all of them
-        
-
-        lessons.push_back(new Lesson(lesson, lessonID));
     }
 
     else
@@ -292,45 +376,18 @@ bool Post::is_prof(string userId, vector<User *> users)
     return false;
 }
 
-bool Post::can_convert_to_int(const std::string &str)
+bool Post::is_major_valid(vector<User *> users, vector<Major *> majors)
 {
-    try
+    for (User *u : users)
     {
-        size_t pos;
-        std::stoi(str, &pos);
-
-        // Check if the entire string was converted to an integer
-        if (pos == str.length())
+        for (Major *m : majors)
         {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    catch (const std::exception &)
-    {
-        return false;
-    }
-}
-
-bool Post::is_major_valid(vector<User *> users, vector<Major *> majors){
-    for(User* u: users){
-        for(Major* m: majors){
-            if(u->get_majorID()==m->get_MID()){
+            if (u->get_majorID() == m->get_MID())
+            {
                 return true;
             }
         }
     }
 
     return false;
-}
-
-User* Post::find_user_by_id(string id, vector<User*> users){
-    for(User* u: users){
-        if(u->get_id()==id){
-            return u;
-        }
-    }
 }
