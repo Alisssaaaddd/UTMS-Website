@@ -97,6 +97,28 @@ void User::show_post_titles()
     }
 }
 
+void User::show_personal_info()
+{
+}
+
+void User::show_post(int postID_){
+    for(PostStruct p: posts){
+        if(p.id==postID_){
+            cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << SPACE
+            << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
+        }
+    }
+}
+
+bool User::have_this_post(int postID_){
+    for(PostStruct p: posts){
+        if(p.id==postID_){
+            return true;
+        }
+    }
+    return false;
+}
+
 Student::Student(SD student, MD major_) : User(major_)
 {
     ID = student.SID;
@@ -112,10 +134,14 @@ Student::~Student()
 
 void Student::show_personal_page()
 {
+    show_personal_info();
+    show_post_titles();
+}
+
+void Student::show_personal_info()
+{
     cout << name << SPACE << major.name << SPACE << semester
          << SPACE << lessons_in_line() << endl;
-
-    show_post_titles();
 }
 
 Professor::Professor(PD professor, MD major_) : User(major_)
@@ -133,10 +159,14 @@ Professor::~Professor()
 
 void Professor::show_personal_page()
 {
+    show_personal_info();
+    show_post_titles();
+}
+
+void Professor::show_personal_info()
+{
     cout << name << SPACE << major.name << SPACE << position
          << SPACE << lessons_in_line() << endl;
-
-    show_post_titles();
 }
 
 Manager::Manager(MD major_) : User(major_)
@@ -153,7 +183,11 @@ Manager::~Manager()
 
 void Manager::show_personal_page()
 {
-    cout << MANAGER_PASSWORD << endl;
-    
+    show_personal_info();
     show_post_titles();
+}
+
+void Manager::show_personal_info()
+{
+    cout << MANAGER_PASSWORD << endl;
 }

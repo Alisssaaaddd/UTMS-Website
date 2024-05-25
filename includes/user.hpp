@@ -34,8 +34,11 @@ public:
     void delete_post(int postID_);
     int get_postID();
     virtual void show_personal_page();
+    virtual void show_personal_info();
+    void show_post(int postID_);
     string lessons_in_line();
     void show_post_titles();
+    bool have_this_post(int postID_);
 };
 
 class Student : public User
@@ -47,6 +50,7 @@ public:
     Student(SD student, MD major_);
     ~Student();
     void show_personal_page();
+    void show_personal_info();
 };
 
 class Professor : public User
@@ -58,6 +62,7 @@ public:
     Professor(PD professor, MD major_);
     ~Professor();
     void show_personal_page();
+    void show_personal_info();
 };
 
 class Manager : public User
@@ -67,4 +72,5 @@ public:
     Manager(MD major_);
     ~Manager();
     void show_personal_page();
+    void show_personal_info();
 };

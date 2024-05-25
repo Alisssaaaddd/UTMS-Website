@@ -82,7 +82,7 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
                     throw Absence();
                 }
 
-                User* chosenUser = find_user_by_id(key, users);
+                User *chosenUser = find_user_by_id(key, users);
                 chosenUser->show_personal_page();
             }
 
@@ -95,6 +95,54 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
 
     else if (command == "post")
     {
+        Argument user;
+        Argument post;
+        vector<string> parts = split(line, SPACE);
+        if (parts[0] == "id")
+        {
+            user.title = parts[0];
+            user.key = parts[1];
+            if (parts[2] == "post_id")
+            {
+                post.title = parts[2];
+                post.key = parts[3];
+            }
+            else
+            {
+                throw BadRequest();
+            }
+        }
+
+        else if (parts[0] == "post_id")
+        {
+            post.title = parts[0];
+            post.key = parts[1];
+            if (parts[2] == "id")
+            {
+                user.title = parts[2];
+                user.key = parts[3];
+            }
+            else
+            {
+                throw BadRequest();
+            }
+        }
+
+        if(!user_exists(user.key, users)){
+            throw Absence();
+        }
+
+        User* chosenUser = find_user_by_id(user.key, users);
+
+        if(!can_convert_to_int(post.key) || !can_convert_to_int(user.key)){
+            throw BadRequest();
+        }
+
+        if(!chosenUser->have_this_post(stoi(post.key))){
+            throw Absence();
+        }
+
+        show_post(chosenUser, stoi(post.key));
     }
 
     else if (command == "notification")
@@ -125,4 +173,9 @@ void Get::show_all_lessons(vector<Lesson *> &lessons, vector<Course *> &courses)
     {
         throw EmptyException();
     }
+}
+
+void Get::show_post(User* chosenUser, int postID_){
+    chosenUser->show_personal_info();
+    chosenUser->show_post(postID_);
 }
