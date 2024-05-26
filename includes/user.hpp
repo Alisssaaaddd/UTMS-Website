@@ -17,7 +17,7 @@ protected:
     vector<Notification> notifs;
     vector<Lesson *> activeLessons;
     vector<PostStruct> posts;
-    vector<User*> connections;
+    vector<User *> connections;
 
 public:
     User(MD major_);
@@ -41,10 +41,11 @@ public:
     void show_post_titles();
     bool have_this_post(int postID_);
     bool already_connected(string userID_);
-    void connect(User* chosenUser);
+    void connect(User *chosenUser);
     void receive_notif(Notification notif);
     void display_all_notifs();
     void display_notif(Notification notif);
+    void send_notif(Notification postNotif);
 };
 
 class Student : public User
@@ -57,6 +58,8 @@ public:
     ~Student();
     void show_personal_page();
     void show_personal_info();
+    bool can_take_lesson(Lesson *&lesson_);
+    bool exam_interfers(string examDate_);
 };
 
 class Professor : public User

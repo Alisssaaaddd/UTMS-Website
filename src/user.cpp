@@ -37,7 +37,7 @@ bool User::does_interfere(string startTime)
 {
     for (Lesson *l : activeLessons)
     {
-        if (l->get_end_time() > stoi(startTime))
+        if (l->get_end_time() > startTime)
         {
             return true;
         }
@@ -149,7 +149,8 @@ void User::receive_notif(Notification newNotif)
 
 void User::display_all_notifs()
 {
-    if(notifs.size()==0){
+    if (notifs.size() == 0)
+    {
         throw EmptyException();
     }
 
@@ -161,11 +162,20 @@ void User::display_all_notifs()
     notifs.clear();
 }
 
-void User::display_notif(Notification notif){
+void User::display_notif(Notification notif)
+{
     cout << notif.id << SPACE << notif.name << COLON << SPACE << notif.message << endl;
 }
 
-    Student::Student(SD student, MD major_) : User(major_)
+void User::send_notif(Notification postNotif)
+{
+    for (User *u : connections)
+    {
+        u->receive_notif(postNotif);
+    }
+}
+
+Student::Student(SD student, MD major_) : User(major_)
 {
     ID = student.SID;
     name = student.name;
@@ -188,6 +198,24 @@ void Student::show_personal_info()
 {
     cout << name << SPACE << major.name << SPACE << semester
          << SPACE << lessons_in_line() << endl;
+}
+
+bool Student::can_take_lesson(Lesson *&lesson_)
+{
+    if (semester < lesson_->get_prereq())
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Student::exam_interfers(string examDate_){
+    for(Lesson* l: activeLessons){
+        if(l->get_date()==examDate_){
+            return true;
+        }
+    }
+    return false;
 }
 
 Professor::Professor(PD professor, MD major_) : User(major_)

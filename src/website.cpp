@@ -81,7 +81,7 @@ void Website::identify_method(string &line)
                 Put *put = dynamic_cast<Put *>(m);
                 if (put)
                 {
-                    // put->identify_command(line, users);
+                    put->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }

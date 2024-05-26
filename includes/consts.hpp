@@ -10,8 +10,6 @@
 #include <stdexcept>
 #include <exception>
 
-#include "../includes/date.hpp"
-
 using namespace std;
 
 typedef struct StudentData
@@ -73,6 +71,8 @@ struct LessonStruct
     string endTime;
     string date;
     string classNumber;
+    string prereq;
+    vector<string> majors_id;
     int lessonID;   
 };
 

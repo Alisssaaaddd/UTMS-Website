@@ -17,3 +17,4 @@ string Course::get_CID() { return CID; };
 string Course::get_name(){return name;};
 string Course::get_credit(){return credit;};
 string Course::get_prereq(){return prereq;};
+vector<string> Course::get_majors_id(){return majorsID;};

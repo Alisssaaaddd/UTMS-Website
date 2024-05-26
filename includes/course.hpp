@@ -19,6 +19,7 @@ class Course{
     string get_name();
     string get_credit();
     string get_prereq();
+    vector<string> get_majors_id();
 };
 
 

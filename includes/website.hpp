@@ -4,7 +4,6 @@
 #include "../includes/course.hpp"
 #include "../includes/major.hpp"
 #include "../includes/error.hpp"
-#include "../includes/date.hpp"
 #include "../includes/method.hpp"
 #include "../includes/post.hpp"
 #include "../includes/get.hpp"

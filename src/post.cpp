@@ -104,6 +104,7 @@ void Post::logout(User *&currentUser)
         currentUser = nullptr;
         cout << "OK" << endl;
     }
+    
     else
     {
         throw Inaccessibility();
@@ -230,6 +231,8 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
                 lesson.courseId = parts[i + 1];
                 Course *relatedCourse = find_course_by_id(courses, lesson.courseId);
                 lesson.courseName = relatedCourse->get_name();
+                lesson.prereq = relatedCourse->get_prereq();
+                lesson.majors_id = relatedCourse->get_majors_id();
             }
             else
             {
@@ -278,6 +281,7 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
     }
     course_offer(lesson, lessonID_, currentUser, lessons, courses, majors, users);
 }
+
 
 void Post::handle_post(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                        vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors, istringstream &iss2)
@@ -351,9 +355,12 @@ void Post::handle_post(string line, vector<User *> &users, User *&currentUser, i
         throw BadRequest();
     }
 
+    Notification postNotif = construct_notif(currentUser, NEW_POST_NOTIF);
     post.id = currentUser->get_postID();
     currentUser->add_post(post);
+    currentUser->send_notif(postNotif);
     cout << "OK" << endl;
+    
 }
 
 void Post::handle_login(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
