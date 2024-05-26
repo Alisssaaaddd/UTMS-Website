@@ -14,9 +14,10 @@ protected:
     string password;
     bool is_signed_in;
     int postID;
-    vector<Notification *> notifs;
+    vector<Notification> notifs;
     vector<Lesson *> activeLessons;
     vector<PostStruct> posts;
+    vector<User*> connections;
 
 public:
     User(MD major_);
@@ -39,6 +40,11 @@ public:
     string lessons_in_line();
     void show_post_titles();
     bool have_this_post(int postID_);
+    bool already_connected(string userID_);
+    void connect(User* chosenUser);
+    void receive_notif(Notification notif);
+    void display_all_notifs();
+    void display_notif(Notification notif);
 };
 
 class Student : public User

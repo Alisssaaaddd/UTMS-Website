@@ -101,25 +101,71 @@ void User::show_personal_info()
 {
 }
 
-void User::show_post(int postID_){
-    for(PostStruct p: posts){
-        if(p.id==postID_){
+void User::show_post(int postID_)
+{
+    for (PostStruct p : posts)
+    {
+        if (p.id == postID_)
+        {
             cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << SPACE
-            << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
+                 << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
         }
     }
 }
 
-bool User::have_this_post(int postID_){
-    for(PostStruct p: posts){
-        if(p.id==postID_){
+bool User::have_this_post(int postID_)
+{
+    for (PostStruct p : posts)
+    {
+        if (p.id == postID_)
+        {
             return true;
         }
     }
     return false;
 }
 
-Student::Student(SD student, MD major_) : User(major_)
+bool User::already_connected(string userID_)
+{
+    for (User *u : connections)
+    {
+        if (u->get_id() == userID_)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void User::connect(User *chosenUser)
+{
+    connections.push_back(chosenUser);
+}
+
+void User::receive_notif(Notification newNotif)
+{
+    notifs.push_back(newNotif);
+}
+
+void User::display_all_notifs()
+{
+    if(notifs.size()==0){
+        throw EmptyException();
+    }
+
+    for (Notification n : notifs)
+    {
+        display_notif(n);
+    }
+
+    notifs.clear();
+}
+
+void User::display_notif(Notification notif){
+    cout << notif.id << SPACE << notif.name << COLON << SPACE << notif.message << endl;
+}
+
+    Student::Student(SD student, MD major_) : User(major_)
 {
     ID = student.SID;
     name = student.name;

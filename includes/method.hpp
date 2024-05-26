@@ -22,4 +22,5 @@ public:
     bool can_convert_to_int(const std::string &str);
     bool lesson_exists(int lessonID, vector<Lesson* > &lessons);
     bool user_exists(string userId, vector<User *> users);
+    Notification construct_notif(User* userData ,string message);
 };

@@ -96,3 +96,11 @@ bool Method::user_exists(string userId, vector<User *> users)
 
     return false;
 }
+
+Notification Method::construct_notif(User* userData ,string message){
+    Notification notif;
+    notif.id = userData->get_id();
+    notif.name = userData->get_name();
+    notif.message = message;
+    return notif;
+}

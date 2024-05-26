@@ -77,8 +77,9 @@ struct LessonStruct
 };
 
 struct Notification{
-    string test;
-    string salam;
+    string id;
+    string name;
+    string message;
 };
 
 struct PostStruct
@@ -88,22 +89,21 @@ struct PostStruct
     string message;
 };
 
-
-
-const string MAJORS_FILE_PATH = "./files/majors.csv",
-             STUDENTS_FILE_PATH = "./files/students.csv",
-             COURSES_FILE_PATH = "./files/courses.csv",
-             PROFESSORS_FILE_PATH = "./files/professors.csv";
-
 const char COMMA = ',',
            SEMI_COLON = ';',
-           SPACE = ' ';
+           SPACE = ' ',
+           COLON = ':';
+const char DOUBLE_QUOTATION = '"';
 const string EMPTY = "";
 
 const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";
 const string MANAGER_NAME = "defaultUser";
 const string MANAGER_MAJOR_ID = "managerMajorId";
-const char DOUBLE_QUOTATION = '"';
+const string COURSE_OFFER_NOTIF = "New Course Offering";
+const string NEW_POST_NOTIF = "New Post";
+const string DELETE_COURSE_NOTIF = "Delete Course";
+const string GET_COURSE_NOTIF = "Get Course";
+
 
 

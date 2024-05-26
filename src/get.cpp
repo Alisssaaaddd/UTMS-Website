@@ -68,6 +68,11 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
             throw BadRequest();
         }
 
+        if (currentUser == nullptr)
+        {
+            throw Inaccessibility();
+        }
+
         else
         {
             if (title == "id")
@@ -98,6 +103,12 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
         Argument user;
         Argument post;
         vector<string> parts = split(line, SPACE);
+
+        if (currentUser == nullptr)
+        {
+            throw Inaccessibility();
+        }
+
         if (parts[0] == "id")
         {
             user.title = parts[0];
@@ -128,17 +139,20 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
             }
         }
 
-        if(!user_exists(user.key, users)){
+        if (!user_exists(user.key, users))
+        {
             throw Absence();
         }
 
-        User* chosenUser = find_user_by_id(user.key, users);
+        User *chosenUser = find_user_by_id(user.key, users);
 
-        if(!can_convert_to_int(post.key) || !can_convert_to_int(user.key)){
+        if (!can_convert_to_int(post.key) || !can_convert_to_int(user.key))
+        {
             throw BadRequest();
         }
 
-        if(!chosenUser->have_this_post(stoi(post.key))){
+        if (!chosenUser->have_this_post(stoi(post.key)))
+        {
             throw Absence();
         }
 
@@ -147,10 +161,15 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
 
     else if (command == "notification")
     {
+        handle_notif(line, currentUser);
     }
 
     else if (command == "my_courses")
     {
+        if (currentUser == nullptr)
+        {
+            throw Inaccessibility();
+        }
     }
 
     else
@@ -175,7 +194,23 @@ void Get::show_all_lessons(vector<Lesson *> &lessons, vector<Course *> &courses)
     }
 }
 
-void Get::show_post(User* chosenUser, int postID_){
+void Get::show_post(User *chosenUser, int postID_)
+{
     chosenUser->show_personal_info();
     chosenUser->show_post(postID_);
+}
+
+void Get::handle_notif(string line, User* &currentUser)
+{
+    if (currentUser == nullptr)
+    {
+        throw Inaccessibility();
+    }
+
+    if (line != EMPTY)
+    {
+        throw BadRequest();
+    }
+
+    currentUser->display_all_notifs();
 }

@@ -29,7 +29,6 @@ public:
             char *coursesFile, char *professorsFile);
     ~Website();
     void import();
-    int check_controll_arguments(int argc);
     void read_files(char *majorsfile, char *studentsFile,
                     char *coursesFile, char *professorsFile);
     void read_majors(char *majorsFileName);

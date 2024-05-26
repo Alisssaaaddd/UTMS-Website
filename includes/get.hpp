@@ -13,5 +13,6 @@ public:
     void show_all_lessons(vector<Lesson *> &lessons, vector<Course* > &courses);
     void identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                             vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors);
+    void handle_notif(string line, User* &currentUser);
     void show_post(User* chosenUser, int postID_);
 };
