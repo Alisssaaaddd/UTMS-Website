@@ -170,6 +170,12 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
         {
             throw Inaccessibility();
         }
+
+        if(currentUser->no_active_lessons()){
+            throw EmptyException();
+        }
+
+        currentUser->display_all_lessons();
     }
 
     else

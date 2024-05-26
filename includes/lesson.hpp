@@ -36,4 +36,5 @@ public:
     void show();
     void show_detailed();
     bool can_accept_this_major(string majorID_);
+    void display();
 };

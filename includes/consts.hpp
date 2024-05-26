@@ -9,6 +9,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <exception>
+#include <algorithm>
 
 using namespace std;
 

@@ -54,3 +54,9 @@ bool Lesson::can_accept_this_major(string majorID_)
     }
     return false;
 }
+
+void Lesson::display(){
+    cout << lessonID << SPACE << courseName << SPACE <<
+    capacity << SPACE << profName << SPACE << time.weekDay << COLON <<
+    time.startTime << "-" << time.endTime << SPACE << date << SPACE << classNumber << endl;
+}

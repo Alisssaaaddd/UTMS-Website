@@ -175,6 +175,48 @@ void User::send_notif(Notification postNotif)
     }
 }
 
+bool User::have_this_lesson(int lessId_)
+{
+    for (Lesson *l : activeLessons)
+    {
+        if (lessId_ == l->get_lessonID())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void User::delete_lesson(Lesson* lesson_)
+{
+   bool valid_lesson = false;
+
+    for(auto l: activeLessons){
+        if(lesson_==l){
+            activeLessons.erase(remove(activeLessons.begin(), activeLessons.end(), lesson_), activeLessons.end());
+            valid_lesson = true;
+        }
+    }
+
+    if (!valid_lesson)
+    {
+        throw Absence();
+    }
+}
+
+bool User::no_active_lessons(){
+    if(activeLessons.size()==0){
+        return true;
+    }
+    return false;
+}
+
+void User::display_all_lessons(){
+    for(Lesson* l: activeLessons){
+        l->display();
+    }
+}
+
 Student::Student(SD student, MD major_) : User(major_)
 {
     ID = student.SID;
@@ -209,9 +251,12 @@ bool Student::can_take_lesson(Lesson *&lesson_)
     return true;
 }
 
-bool Student::exam_interfers(string examDate_){
-    for(Lesson* l: activeLessons){
-        if(l->get_date()==examDate_){
+bool Student::exam_interfers(string examDate_)
+{
+    for (Lesson *l : activeLessons)
+    {
+        if (l->get_date() == examDate_)
+        {
             return true;
         }
     }

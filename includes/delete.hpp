@@ -12,4 +12,7 @@ public:
     ~Delete();
     void identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                           vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors);
+
+    void handle_post(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
+                        vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors, istringstream &iss2);
 };

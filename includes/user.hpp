@@ -31,6 +31,7 @@ public:
     void logout();
     bool does_interfere(string startTime);
     void add_lesson(Lesson *&newLesson);
+    void delete_lesson(Lesson* lesson_);
     void add_post(PostStruct newPost);
     void delete_post(int postID_);
     int get_postID();
@@ -46,6 +47,9 @@ public:
     void display_all_notifs();
     void display_notif(Notification notif);
     void send_notif(Notification postNotif);
+    bool have_this_lesson(int lessId_);
+    bool no_active_lessons();
+    void display_all_lessons();
 };
 
 class Student : public User
