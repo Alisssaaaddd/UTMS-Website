@@ -34,7 +34,15 @@ void Website::identify_method(string &line)
     string method;
     iss >> method;
     size_t i = line.find(method);
-    line = line.substr(i + method.length() + 1);
+
+    if (i != string::npos)
+    {
+        line = line.substr(i + method.length());
+        while (!line.empty() && line[0] == SPACE)
+        {
+            line = line.substr(1);
+        }
+    }
 
     try
     {
@@ -126,10 +134,10 @@ void Website::read_majors(char *majorsFileName)
         istringstream iss(line);
         string token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         major.MID = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         major.name = token;
 
         majors.push_back(new Major(major));
@@ -149,20 +157,20 @@ void Website::read_students(char *studentsFileName)
         istringstream iss(line);
         string token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         student.SID = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         student.name = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         student.majorID = token;
         MD studentMajor = find_MajorData_by_id(student.majorID);
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         student.semester = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         student.password = token;
 
         users.push_back(new Student(student, studentMajor));
@@ -182,20 +190,20 @@ void Website::read_courses(char *coursesFileName)
         istringstream iss(line);
         string token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         course.CID = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         course.name = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         course.credit = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         course.prereq = token;
 
-        getline(iss, token, ',');
-        course.majors_id = split(token, ';');
+        getline(iss, token, COMMA);
+        course.majors_id = split(token, SEMI_COLON);
 
         courses.push_back(new Course(course));
     }
@@ -214,20 +222,20 @@ void Website::read_professors(char *professorsFileName)
         istringstream iss(line);
         string token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         prof.PID = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         prof.name = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         prof.majorID = token;
         MD profMajor = find_MajorData_by_id(prof.majorID);
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         prof.position = token;
 
-        getline(iss, token, ',');
+        getline(iss, token, COMMA);
         prof.password = token;
 
         users.push_back(new Professor(prof, profMajor));
@@ -261,8 +269,10 @@ void Website::read_files(char *majorsFile, char *studentsFile,
 MD Website::find_MajorData_by_id(string userMajorId)
 {
     MD major;
-    for(Major* m: majors){
-        if(m->get_MID()==userMajorId){
+    for (Major *m : majors)
+    {
+        if (m->get_MID() == userMajorId)
+        {
             major.MID = m->get_MID();
             major.name = m->get_name();
         }

@@ -9,8 +9,8 @@ Method::~Method()
 }
 
 void Method::identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
-                            vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors){
-    
+                              vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors)
+{
 }
 
 vector<string> Method::split(const string &str, const char delim)
@@ -28,17 +28,23 @@ vector<string> Method::split(const string &str, const char delim)
     return strings;
 }
 
-Course* Method::find_course_by_id(vector<Course *> &courses, string courseId){
-    for(Course* c: courses){
-        if(c->get_CID()==courseId){
+Course *Method::find_course_by_id(vector<Course *> &courses, string courseId)
+{
+    for (Course *c : courses)
+    {
+        if (c->get_CID() == courseId)
+        {
             return c;
         }
     }
 }
 
-User* Method::find_user_by_id(string id ,vector<User*> &users){
-    for(User* u: users){
-        if(u->get_id()==id){
+User *Method::find_user_by_id(string id, vector<User *> &users)
+{
+    for (User *u : users)
+    {
+        if (u->get_id() == id)
+        {
             return u;
         }
     }
@@ -49,9 +55,9 @@ bool Method::can_convert_to_int(const std::string &str)
     try
     {
         size_t pos;
-        std::stoi(str, &pos);
+        int value = std::stoi(str, &pos);
 
-        if (pos == str.length())
+        if (pos == str.length() && value >= 0)
         {
             return true;
         }
@@ -66,21 +72,27 @@ bool Method::can_convert_to_int(const std::string &str)
     }
 }
 
-Lesson* Method::find_lesson_by_id(vector<Lesson *> &lessons, string lessonID){
-    for(Lesson* l: lessons){
-        if(l->get_lessonID()==stoi(lessonID)){
+Lesson *Method::find_lesson_by_id(vector<Lesson *> &lessons, string lessonID)
+{
+    for (Lesson *l : lessons)
+    {
+        if (l->get_lessonID() == stoi(lessonID))
+        {
             return l;
         }
     }
 }
 
-bool Method::lesson_exists(int lessonID, vector<Lesson* > &lessons){
-    for(Lesson* l: lessons){
-        if(l->get_lessonID()==lessonID){
+bool Method::lesson_exists(int lessonID, vector<Lesson *> &lessons)
+{
+    for (Lesson *l : lessons)
+    {
+        if (l->get_lessonID() == lessonID)
+        {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -97,7 +109,8 @@ bool Method::user_exists(string userId, vector<User *> users)
     return false;
 }
 
-Notification Method::construct_notif(User* userData ,string message){
+Notification Method::construct_notif(User *userData, string message)
+{
     Notification notif;
     notif.id = userData->get_id();
     notif.name = userData->get_name();

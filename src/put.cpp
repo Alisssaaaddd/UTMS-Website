@@ -18,7 +18,11 @@ void Put::identify_command(string line, vector<User *> &users, User *&currentUse
     size_t i = line.find("?");
     if (i != string::npos)
     {
-        line = line.substr(i + 2);
+        line = line.substr(i + 1);
+        while (!line.empty() && line[0] == '?')
+        {
+            line = line.substr(1);
+        }
     }
 
     else
@@ -70,7 +74,7 @@ void Put::handle_my_courses(string line, vector<User *> &users, User *&currentUs
         {
             throw Inaccessibility();
         }
-        
+
         Student *currentStudent = dynamic_cast<Student *>(currentUser);
 
         if (currentStudent)

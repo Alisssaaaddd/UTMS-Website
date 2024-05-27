@@ -42,7 +42,11 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
     size_t i = line.find("?");
     if (i != string::npos)
     {
-        line = line.substr(i + 2);
+        line = line.substr(i + 1);
+        while (!line.empty() && line[0] == '?')
+        {
+            line = line.substr(1);
+        }
     }
 
     else
@@ -110,13 +114,12 @@ void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, 
         }
 
         User *chosenUser = find_user_by_id(lesson.profId, users);
-        Professor* professor = dynamic_cast<Professor*>(chosenUser);
+        Professor *professor = dynamic_cast<Professor *>(chosenUser);
 
-        if (professor==nullptr)
+        if (professor == nullptr)
         {
             throw Inaccessibility();
         }
-
 
         Course *chosenCourse = find_course_by_id(courses, lesson.courseId);
 
@@ -271,19 +274,33 @@ void Post::handle_post(string line, vector<User *> &users, User *&currentUser, i
     if (title1 == "title")
     {
         size_t i = line.find(DOUBLE_QUOTATION);
+        if (i == string::npos)
+        {
+            throw BadRequest();
+        }
         line = line.substr(i + 1);
         istringstream iss3(line);
         string temp;
         getline(iss3, temp, DOUBLE_QUOTATION);
         post.title = temp;
+
         i = line.find(DOUBLE_QUOTATION);
+        if (i == string::npos)
+        {
+            throw BadRequest();
+        }
         line = line.substr(i + 1);
 
         istringstream iss4(line);
         iss4 >> temp;
+
         if (temp == "message")
         {
             i = line.find(DOUBLE_QUOTATION);
+            if (i == string::npos)
+            {
+                throw BadRequest();
+            }
             line = line.substr(i + 1);
             istringstream iss5(line);
             getline(iss5, temp, DOUBLE_QUOTATION);
@@ -294,23 +311,36 @@ void Post::handle_post(string line, vector<User *> &users, User *&currentUser, i
             throw BadRequest();
         }
     }
-
     else if (title1 == "message")
     {
         size_t i = line.find(DOUBLE_QUOTATION);
+        if (i == string::npos)
+        {
+            throw BadRequest();
+        }
         line = line.substr(i + 1);
         istringstream iss3(line);
         string temp;
         getline(iss3, temp, DOUBLE_QUOTATION);
         post.message = temp;
+
         i = line.find(DOUBLE_QUOTATION);
+        if (i == string::npos)
+        {
+            throw BadRequest();
+        }
         line = line.substr(i + 1);
 
         istringstream iss4(line);
         iss4 >> temp;
+
         if (temp == "title")
         {
             i = line.find(DOUBLE_QUOTATION);
+            if (i == string::npos)
+            {
+                throw BadRequest();
+            }
             line = line.substr(i + 1);
             istringstream iss5(line);
             getline(iss5, temp, DOUBLE_QUOTATION);

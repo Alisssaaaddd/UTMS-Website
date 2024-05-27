@@ -17,7 +17,11 @@ void Delete::identify_command(string line, vector<User *> &users, User *&current
     size_t i = line.find("?");
     if (i != string::npos)
     {
-        line = line.substr(i + 2);
+        line = line.substr(i + 1);
+        while (!line.empty() && line[0] == '?')
+        {
+            line = line.substr(1);
+        }
     }
 
     else
