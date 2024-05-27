@@ -94,22 +94,22 @@ void Website::identify_method(string &line)
 
     catch (BadRequest &br)
     {
-        cerr << br.what() << endl;
+        cout << br.what() << endl;
     }
 
     catch (Absence &a)
     {
-        cerr << a.what() << endl;
+        cout << a.what() << endl;
     }
 
     catch (EmptyException &ee)
     {
-        cerr << ee.what() << endl;
+        cout << ee.what() << endl;
     }
 
     catch (Inaccessibility &ie)
     {
-        cerr << ie.what() << endl;
+        cout << ie.what() << endl;
     }
 }
 

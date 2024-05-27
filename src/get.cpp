@@ -100,23 +100,28 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
 
     else if (command == "post")
     {
+        istringstream iss2(line);
         Argument user;
         Argument post;
-        vector<string> parts = split(line, SPACE);
-
+        string title;
+        string key;
+        iss2>>title;
+        iss2>>key;
         if (currentUser == nullptr)
         {
             throw Inaccessibility();
         }
 
-        if (parts[0] == "id")
+        if (title == "id")
         {
-            user.title = parts[0];
-            user.key = parts[1];
-            if (parts[2] == "post_id")
+            user.title = title;
+            user.key = key;
+            iss2>>title;
+            iss2>>key;
+            if (title == "post_id")
             {
-                post.title = parts[2];
-                post.key = parts[3];
+                post.title = title;
+                post.key = key;
             }
             else
             {
@@ -124,14 +129,16 @@ void Get::identify_command(string line, vector<User *> &users, User *&currentUse
             }
         }
 
-        else if (parts[0] == "post_id")
+        else if (title == "post_id")
         {
-            post.title = parts[0];
-            post.key = parts[1];
-            if (parts[2] == "id")
+            post.title = title;
+            post.key = key;
+            iss2>>title;
+            iss2>>key;
+            if (title == "id")
             {
-                user.title = parts[2];
-                user.key = parts[3];
+                user.title = title;
+                user.key = key;
             }
             else
             {

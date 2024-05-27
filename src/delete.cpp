@@ -26,10 +26,6 @@ void Delete::identify_command(string line, vector<User *> &users, User *&current
     }
 
     istringstream iss2(line);
-    string title;
-    string key;
-    iss2 >> title;
-    iss2 >> key;
     if (command == "post")
     {
         handle_post(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
@@ -37,49 +33,7 @@ void Delete::identify_command(string line, vector<User *> &users, User *&current
 
     else if (command == "my_courses")
     {
-        if (currentUser == nullptr)
-        {
-            throw Inaccessibility();
-        }
-
-        if (title == "id")
-        {
-            if (!can_convert_to_int(key))
-            {
-                throw BadRequest();
-            }
-
-            if (!lesson_exists(stoi(key), lessons))
-            {
-                throw Absence();
-            }
-
-            Lesson *chosenLesson = find_lesson_by_id(lessons, key);
-
-            Student *currentStudent = dynamic_cast<Student *>(currentUser);
-
-            if (currentStudent)
-            {
-                if(!currentStudent->have_this_lesson(stoi(key))){
-                    throw Absence();
-                }
-
-                currentStudent->delete_lesson(chosenLesson);
-                Notification newNotif = construct_notif(currentStudent, DELETE_COURSE_NOTIF);
-                currentStudent->send_notif(newNotif);
-                cout << "OK" << endl;
-            }
-
-            else
-            {
-                throw Inaccessibility();
-            }
-        }
-
-        else
-        {
-            throw BadRequest();
-        }
+        handle_my_courses(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
     }
 
     else
@@ -117,5 +71,52 @@ void Delete::handle_post(string line, vector<User *> &users, User *&currentUser,
         {
             throw BadRequest();
         }
+    }
+}
+
+void Delete::handle_my_courses(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
+                               vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors, istringstream &iss2)
+{
+    string title;
+    string key;
+    iss2 >> title;
+    iss2 >> key;
+    if (currentUser == nullptr)
+    {
+        throw Inaccessibility();
+    }
+
+    if (title == "id")
+    {
+        if (!can_convert_to_int(key))
+        {
+            throw BadRequest();
+        }
+
+        if (!lesson_exists(stoi(key), lessons))
+        {
+            throw Absence();
+        }
+
+        Lesson *chosenLesson = find_lesson_by_id(lessons, key);
+
+        Student *currentStudent = dynamic_cast<Student *>(currentUser);
+
+        if (currentStudent)
+        {
+            if (!currentStudent->have_this_lesson(stoi(key)))
+            {
+                throw Absence();
+            }
+
+            currentStudent->delete_lesson(stoi(key));
+            Notification newNotif = construct_notif(currentStudent, DELETE_COURSE_NOTIF);
+            currentStudent->send_notif(newNotif);
+            cout << "OK" << endl;
+        }
+    }
+
+    else{
+        throw BadRequest();
     }
 }

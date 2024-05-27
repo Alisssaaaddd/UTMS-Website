@@ -93,13 +93,14 @@ struct PostStruct
 const char COMMA = ',',
            SEMI_COLON = ';',
            SPACE = ' ',
-           COLON = ':';
+           COLON = ':',
+           HYPHEN = '-';
 const char DOUBLE_QUOTATION = '"';
 const string EMPTY = "";
 
 const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";
-const string MANAGER_NAME = "defaultUser";
+const string MANAGER_NAME = "UT_account";
 const string MANAGER_MAJOR_ID = "managerMajorId";
 const string COURSE_OFFER_NOTIF = "New Course Offering";
 const string NEW_POST_NOTIF = "New Post";

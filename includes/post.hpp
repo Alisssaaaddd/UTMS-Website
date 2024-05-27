@@ -32,7 +32,6 @@ public:
 
     bool course_exists(string courseId, vector<Course *> courses);
     bool is_prof(string userId, vector<User *> users);
-    bool is_major_valid(vector<User *> users, vector<Major *> majors);
     void connect_users(User *currentUser, User *chosenUser);
     void send_notif_to_all(Notification notif, vector<User*> &users);
 };

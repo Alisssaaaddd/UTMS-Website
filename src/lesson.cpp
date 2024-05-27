@@ -16,7 +16,6 @@ Lesson::Lesson(LessonStruct ls, int &lessonId_current)
     lessonID = ls.lessonID;
     majorsId = ls.majors_id;
     prereq = ls.prereq;
-    lessonId_current++;
 }
 
 Lesson::~Lesson()

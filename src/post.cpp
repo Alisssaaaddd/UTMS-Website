@@ -10,40 +10,26 @@ Post::~Post()
 
 void Post::login(Argument id, Argument password, vector<User *> &users, User *&currentUser)
 {
-    bool id_found = false;
-    bool password_found = false;
-    for (User *u : users)
-    {
-        if (!u->signed_in())
-        {
-            if (u->get_id() == id.key and u->get_password() == password.key ||
-                u->get_id() == MANAGER_ID and u->get_password() == MANAGER_PASSWORD)
-            {
-                id_found = true;
-                password_found = true;
-                u->login();
-                currentUser = u;
-
-                break;
-            }
-        }
-
-        else
-        {
-            throw Inaccessibility();
-        }
-    }
-
-    if (id_found == false)
+    bool id_found = user_exists(id.key, users);
+    if (!id_found)
     {
         throw Absence();
     }
 
-    if (password_found == false)
+    User *chosenUser = find_user_by_id(id.key, users);
+
+    if (chosenUser->get_password() != password.key)
     {
         throw Inaccessibility();
     }
 
+    if (chosenUser->signed_in())
+    {
+        throw Inaccessibility();
+    }
+
+    chosenUser->login();
+    currentUser = chosenUser;
     cout << "OK" << endl;
 }
 
@@ -104,7 +90,7 @@ void Post::logout(User *&currentUser)
         currentUser = nullptr;
         cout << "OK" << endl;
     }
-    
+
     else
     {
         throw Inaccessibility();
@@ -114,41 +100,43 @@ void Post::logout(User *&currentUser)
 void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, vector<Lesson *> &lessons,
                         vector<Course *> &courses, vector<Major *> &majors, vector<User *> &users)
 {
-    Manager *UTaccount = dynamic_cast<Manager *>(currentUser);
-    if (UTaccount)
+    Manager *admin = dynamic_cast<Manager *>(currentUser);
+    if (admin)
     {
         if (!can_convert_to_int(lesson.courseId) || !can_convert_to_int(lesson.profId) ||
             !can_convert_to_int(lesson.capacity) || !can_convert_to_int(lesson.classNumber))
         {
-            cout << "Adad Nist!" << endl;
             throw BadRequest();
         }
 
-        if (!is_prof(lesson.profId, users))
+        User *chosenUser = find_user_by_id(lesson.profId, users);
+        Professor* professor = dynamic_cast<Professor*>(chosenUser);
+
+        if (professor==nullptr)
         {
-            cout << "Ostad Nist!" << endl;
             throw Inaccessibility();
         }
 
-        if (!is_major_valid(users, majors))
+
+        Course *chosenCourse = find_course_by_id(courses, lesson.courseId);
+
+        if (!chosenCourse->valid_major(professor->get_majorID()))
         {
-            cout << "Reshte kharab!" << endl;
             throw Inaccessibility();
         }
 
-        User *chosenProf = find_user_by_id(lesson.profId, users);
-        if (chosenProf->does_interfere(lesson.startTime))
-        {
-            cout << "Tadakhol Dare" << endl;
-            throw Inaccessibility();
-        }
-
-        cout << "OK" << endl;
         Lesson *newLesson = new Lesson(lesson, lessonID);
+        if (professor->does_interfere(newLesson))
+        {
+            throw Inaccessibility();
+        }
+
         lessons.push_back(newLesson);
-        chosenProf->add_lesson(newLesson);
-        Notification newNotif = construct_notif(chosenProf, COURSE_OFFER_NOTIF);
+        lessonID++;
+        professor->add_lesson(newLesson);
+        Notification newNotif = construct_notif(professor, COURSE_OFFER_NOTIF);
         send_notif_to_all(newNotif, users);
+        cout << "OK" << endl;
     }
 
     else
@@ -187,22 +175,6 @@ bool Post::is_prof(string userId, vector<User *> users)
     return false;
 }
 
-bool Post::is_major_valid(vector<User *> users, vector<Major *> majors)
-{
-    for (User *u : users)
-    {
-        for (Major *m : majors)
-        {
-            if (u->get_majorID() == m->get_MID())
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 void Post::connect_users(User *currentUser, User *chosenUser)
 {
     currentUser->connect(chosenUser);
@@ -219,6 +191,7 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
 
     if (parts.size() != 12)
     {
+        cout << "andaze 12 nist!" << endl;
         throw BadRequest();
     }
 
@@ -262,9 +235,9 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
         else if (parts[i] == "time")
         {
             lesson.weekDay = parts[i + 1];
-            vector<string> timeParts = split(lesson.weekDay, ':');
+            vector<string> timeParts = split(lesson.weekDay, COLON);
             lesson.weekDay = timeParts[0];
-            vector<string> hourParts = split(timeParts[1], '-');
+            vector<string> hourParts = split(timeParts[1], HYPHEN);
             lesson.startTime = hourParts[0];
             lesson.endTime = hourParts[1];
         }
@@ -281,7 +254,6 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
     }
     course_offer(lesson, lessonID_, currentUser, lessons, courses, majors, users);
 }
-
 
 void Post::handle_post(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                        vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors, istringstream &iss2)
@@ -358,9 +330,16 @@ void Post::handle_post(string line, vector<User *> &users, User *&currentUser, i
     Notification postNotif = construct_notif(currentUser, NEW_POST_NOTIF);
     post.id = currentUser->get_postID();
     currentUser->add_post(post);
-    currentUser->send_notif(postNotif);
+    Manager *admin = dynamic_cast<Manager *>(currentUser);
+    if (admin)
+    {
+        send_notif_to_all(postNotif, users);
+    }
+    else
+    {
+        currentUser->send_notif(postNotif);
+    }
     cout << "OK" << endl;
-    
 }
 
 void Post::handle_login(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
@@ -373,6 +352,11 @@ void Post::handle_login(string line, vector<User *> &users, User *&currentUser, 
     string end;
     iss2 >> title;
 
+    if (currentUser != nullptr)
+    {
+        throw Inaccessibility();
+    }
+
     if (title == "id")
     {
         iss2 >> key;
@@ -380,9 +364,17 @@ void Post::handle_login(string line, vector<User *> &users, User *&currentUser, 
         id.key = key;
 
         iss2 >> title;
-        password.title = title;
-        iss2 >> key;
-        password.key = key;
+        if (title == "password")
+        {
+            password.title = title;
+            iss2 >> key;
+            password.key = key;
+        }
+
+        else
+        {
+            throw BadRequest();
+        }
 
         iss2 >> end;
         if (end != EMPTY)
@@ -396,9 +388,17 @@ void Post::handle_login(string line, vector<User *> &users, User *&currentUser, 
         password.key = key;
 
         iss2 >> title;
-        id.title = title;
-        iss2 >> key;
-        id.key = key;
+        if (title == "id")
+        {
+            id.title = title;
+            iss2 >> key;
+            id.key = key;
+        }
+
+        else
+        {
+            throw BadRequest();
+        }
 
         iss2 >> end;
         if (end != EMPTY)
@@ -456,7 +456,8 @@ void Post::handle_connect(string line, vector<User *> &users, User *&currentUser
 
 void Post::send_notif_to_all(Notification notif, vector<User *> &users)
 {
-    for(User* u: users){
+    for (User *u : users)
+    {
         u->receive_notif(notif);
     }
 }

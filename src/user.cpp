@@ -33,15 +33,32 @@ void User::show_personal_page()
 {
 }
 
-bool User::does_interfere(string startTime)
+bool User::does_interfere(Lesson *lesson_)
 {
+    bool day_interference = false;
+    bool time_interference = false;
     for (Lesson *l : activeLessons)
     {
-        if (l->get_end_time() > startTime)
+        day_interference = false;
+        if (lesson_->get_week_day() == l->get_week_day())
         {
-            return true;
+            day_interference = true;
+            if (day_interference)
+            {
+                if (stoi(l->get_end_time()) > stoi(lesson_->get_start_time()))
+                {
+                    time_interference = true;
+                    break;
+                }
+            }
         }
     }
+
+    if (day_interference and time_interference)
+    {
+        return true;
+    }
+
     return false;
 }
 
@@ -50,7 +67,7 @@ void User::add_lesson(Lesson *&newLesson)
     activeLessons.push_back(newLesson);
 }
 
-void User::add_post(PostStruct post)
+void User::add_post(PostStruct &post)
 {
     posts.push_back(post);
     postID++;
@@ -107,8 +124,8 @@ void User::show_post(int postID_)
     {
         if (p.id == postID_)
         {
-            cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << SPACE
-                 << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
+            cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << SPACE;
+            cout << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
         }
     }
 }
@@ -154,9 +171,9 @@ void User::display_all_notifs()
         throw EmptyException();
     }
 
-    for (Notification n : notifs)
+    for (int i = notifs.size() - 1; i >= 0; i--)
     {
-        display_notif(n);
+        display_notif(notifs[i]);
     }
 
     notifs.clear();
@@ -187,13 +204,15 @@ bool User::have_this_lesson(int lessId_)
     return false;
 }
 
-void User::delete_lesson(Lesson* lesson_)
+void User::delete_lesson(int lessId_)
 {
-   bool valid_lesson = false;
+    bool valid_lesson = false;
 
-    for(auto l: activeLessons){
-        if(lesson_==l){
-            activeLessons.erase(remove(activeLessons.begin(), activeLessons.end(), lesson_), activeLessons.end());
+    for (int i = 0; i < activeLessons.size(); i++)
+    {
+        if (activeLessons[i]->get_lessonID() == lessId_)
+        {
+            activeLessons.erase(activeLessons.begin() + i);
             valid_lesson = true;
         }
     }
@@ -204,15 +223,19 @@ void User::delete_lesson(Lesson* lesson_)
     }
 }
 
-bool User::no_active_lessons(){
-    if(activeLessons.size()==0){
+bool User::no_active_lessons()
+{
+    if (activeLessons.size() == 0)
+    {
         return true;
     }
     return false;
 }
 
-void User::display_all_lessons(){
-    for(Lesson* l: activeLessons){
+void User::display_all_lessons()
+{
+    for (Lesson *l : activeLessons)
+    {
         l->display();
     }
 }

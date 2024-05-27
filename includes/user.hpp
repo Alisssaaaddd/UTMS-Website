@@ -29,10 +29,10 @@ public:
     bool signed_in();
     void login();
     void logout();
-    bool does_interfere(string startTime);
+    bool does_interfere(Lesson* lesson_);
     void add_lesson(Lesson *&newLesson);
-    void delete_lesson(Lesson* lesson_);
-    void add_post(PostStruct newPost);
+    void delete_lesson(int lessId_);
+    void add_post(PostStruct &newPost);
     void delete_post(int postID_);
     int get_postID();
     virtual void show_personal_page();

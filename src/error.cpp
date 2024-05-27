@@ -19,7 +19,7 @@ BadRequest::BadRequest() : runtime_error("Bad request") {}
 BadRequest::~BadRequest() {}
 
 const char* BadRequest::what() {
-    return "Bad request";
+    return "Bad Request";
 }
 
 Inaccessibility::Inaccessibility() : runtime_error("Permission Denied") {}

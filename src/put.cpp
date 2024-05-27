@@ -64,7 +64,13 @@ void Put::handle_my_courses(string line, vector<User *> &users, User *&currentUs
         }
 
         Lesson *chosenLesson = find_lesson_by_id(lessons, lesID);
+        Course *course = find_course_by_id(courses, chosenLesson->get_course_id());
 
+        if (!course->valid_major(currentUser->get_majorID()))
+        {
+            throw Inaccessibility();
+        }
+        
         Student *currentStudent = dynamic_cast<Student *>(currentUser);
 
         if (currentStudent)
@@ -79,7 +85,7 @@ void Put::handle_my_courses(string line, vector<User *> &users, User *&currentUs
                 throw Inaccessibility();
             }
 
-            if (currentStudent->does_interfere(chosenLesson->get_start_time()) ||
+            if (currentStudent->does_interfere(chosenLesson) ||
                 currentStudent->exam_interfers(chosenLesson->get_date()))
             {
                 throw Inaccessibility();
