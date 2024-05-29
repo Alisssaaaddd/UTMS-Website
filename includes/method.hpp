@@ -23,4 +23,7 @@ public:
     bool lesson_exists(int lessonID, vector<Lesson* > &lessons);
     bool user_exists(string userId, vector<User *> users);
     Notification construct_notif(User* userData ,string message);
+    bool all_is_space(const std::string& line);
+    void check_question_mark(string &line);
+    void successful_request();
 };

@@ -13,7 +13,7 @@ public:
     void identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                           vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors);
     void login(Argument id, Argument password, vector<User *> &users, User *&currentUser);
-    void logout(User *&currentUser);
+    void logout(User *&currentUser, string line);
 
     void handle_course_offer(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                              vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors);

@@ -94,9 +94,11 @@ const char COMMA = ',',
            SEMI_COLON = ';',
            SPACE = ' ',
            COLON = ':',
-           HYPHEN = '-';
+           HYPHEN = '-',
+           QUESTION_MARK = '?';
 const char DOUBLE_QUOTATION = '"';
 const string EMPTY = "";
+const string QUESTION_MARK_STRING = "?";
 
 const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";
@@ -106,6 +108,7 @@ const string COURSE_OFFER_NOTIF = "New Course Offering";
 const string NEW_POST_NOTIF = "New Post";
 const string DELETE_COURSE_NOTIF = "Delete Course";
 const string GET_COURSE_NOTIF = "Get Course";
+const string SUCCESS_MESSAGE = "OK";
 
 
 

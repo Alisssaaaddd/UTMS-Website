@@ -18,10 +18,11 @@ private:
     vector<Course *> courses;
     vector<Major *> majors;
     vector<Method *> methods;
-    vector<Lesson* > lessons; 
+    vector<Lesson *> lessons;
     User *currentUser;
     int lessonId_current;
     MD manager_major;
+    bool exit;
 
 public:
     Website(char *majorsfile, char *studentsFile,

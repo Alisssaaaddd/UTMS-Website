@@ -12,10 +12,15 @@ Website::Website(char *majorsFile, char *studentsFile,
     users.push_back(new Manager(manager_major));
 
     lessonId_current = 1;
+    exit = false;
 }
 
 Website::~Website()
 {
+    for(auto u: users) delete u;
+    for(auto c: courses) delete c;
+    for(auto m: majors) delete m;
+    for(auto l: lessons) delete l;
 }
 
 void Website::import()
@@ -25,6 +30,7 @@ void Website::import()
     {
         istringstream iss(line);
         identify_method(line);
+        if(exit) break;
     }
 }
 
@@ -94,6 +100,10 @@ void Website::identify_method(string &line)
             }
         }
 
+        else if (method == "QUIT"){
+            exit = true;
+        }
+
         else
         {
             throw BadRequest();
@@ -102,22 +112,22 @@ void Website::identify_method(string &line)
 
     catch (BadRequest &br)
     {
-        cout << br.what() << endl;
+        cerr << br.what() << endl;
     }
 
     catch (Absence &a)
     {
-        cout << a.what() << endl;
+        cerr << a.what() << endl;
     }
 
     catch (EmptyException &ee)
     {
-        cout << ee.what() << endl;
+        cerr << ee.what() << endl;
     }
 
     catch (Inaccessibility &ie)
     {
-        cout << ie.what() << endl;
+        cerr << ie.what() << endl;
     }
 }
 

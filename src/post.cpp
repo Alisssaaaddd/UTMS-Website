@@ -30,7 +30,7 @@ void Post::login(Argument id, Argument password, vector<User *> &users, User *&c
 
     chosenUser->login();
     currentUser = chosenUser;
-    cout << "OK" << endl;
+    successful_request();
 }
 
 void Post::identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
@@ -39,20 +39,8 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
     istringstream iss(line);
     string command;
     iss >> command;
-    size_t i = line.find("?");
-    if (i != string::npos)
-    {
-        line = line.substr(i + 1);
-        while (!line.empty() && line[0] == '?')
-        {
-            line = line.substr(1);
-        }
-    }
-
-    else
-    {
-        throw BadRequest();
-    }
+    
+    check_question_mark(line);
 
     istringstream iss2(line);
     if (command == "login")
@@ -62,7 +50,7 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
 
     else if (command == "logout")
     {
-        logout(currentUser);
+        logout(currentUser, line);
     }
 
     else if (command == "post")
@@ -86,14 +74,20 @@ void Post::identify_command(string line, vector<User *> &users, User *&currentUs
     }
 }
 
-void Post::logout(User *&currentUser)
+void Post::logout(User *&currentUser, string line)
 {
+    if (line != EMPTY and !all_is_space(line))
+    {
+        throw BadRequest();
+    }
+
     if (currentUser != nullptr)
     {
         currentUser->logout();
         currentUser = nullptr;
-        cout << "OK" << endl;
+        successful_request();;
     }
+
 
     else
     {
@@ -139,7 +133,7 @@ void Post::course_offer(LessonStruct lesson, int &lessonID, User *&currentUser, 
         professor->add_lesson(newLesson);
         Notification newNotif = construct_notif(professor, COURSE_OFFER_NOTIF);
         send_notif_to_all(newNotif, users);
-        cout << "OK" << endl;
+        successful_request();
     }
 
     else
@@ -182,7 +176,7 @@ void Post::connect_users(User *currentUser, User *chosenUser)
 {
     currentUser->connect(chosenUser);
     chosenUser->connect(currentUser);
-    cout << "OK" << endl;
+    successful_request();
 }
 
 void Post::handle_course_offer(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
@@ -191,14 +185,13 @@ void Post::handle_course_offer(string line, vector<User *> &users, User *&curren
     vector<string> parts = split(line, SPACE);
     LessonStruct lesson;
     lesson.lessonID = lessonID_;
-
-    if (parts.size() != 12)
+    int i = 0;
+    if (parts.size() != 13)
     {
-        cout << "andaze 12 nist!" << endl;
         throw BadRequest();
     }
 
-    for (int i = 0; i < parts.size(); i += 2)
+    for (int i = 1; i < 13; i += 2)
     {
         if (parts[i] == "course_id")
         {
@@ -369,7 +362,7 @@ void Post::handle_post(string line, vector<User *> &users, User *&currentUser, i
     {
         currentUser->send_notif(postNotif);
     }
-    cout << "OK" << endl;
+    successful_request();
 }
 
 void Post::handle_login(string line, vector<User *> &users, User *&currentUser, int &lessonID_,

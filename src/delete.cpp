@@ -14,20 +14,8 @@ void Delete::identify_command(string line, vector<User *> &users, User *&current
     istringstream iss(line);
     string command;
     iss >> command;
-    size_t i = line.find("?");
-    if (i != string::npos)
-    {
-        line = line.substr(i + 1);
-        while (!line.empty() && line[0] == '?')
-        {
-            line = line.substr(1);
-        }
-    }
-
-    else
-    {
-        throw BadRequest();
-    }
+    
+    check_question_mark(line);
 
     istringstream iss2(line);
     if (command == "post")
@@ -68,7 +56,7 @@ void Delete::handle_post(string line, vector<User *> &users, User *&currentUser,
             }
 
             currentUser->delete_post(stoi(key));
-            cout << "OK" << endl;
+            successful_request();
         }
 
         else
@@ -116,11 +104,12 @@ void Delete::handle_my_courses(string line, vector<User *> &users, User *&curren
             currentStudent->delete_lesson(stoi(key));
             Notification newNotif = construct_notif(currentStudent, DELETE_COURSE_NOTIF);
             currentStudent->send_notif(newNotif);
-            cout << "OK" << endl;
+            successful_request();
         }
     }
 
-    else{
+    else
+    {
         throw BadRequest();
     }
 }

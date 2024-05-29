@@ -11,24 +11,11 @@ Put::~Put()
 void Put::identify_command(string line, vector<User *> &users, User *&currentUser, int &lessonID_,
                            vector<Lesson *> &lessons, vector<Course *> &courses, vector<Major *> &majors)
 {
-
     istringstream iss(line);
     string command;
     iss >> command;
-    size_t i = line.find("?");
-    if (i != string::npos)
-    {
-        line = line.substr(i + 1);
-        while (!line.empty() && line[0] == '?')
-        {
-            line = line.substr(1);
-        }
-    }
-
-    else
-    {
-        throw BadRequest();
-    }
+    
+    check_question_mark(line);
 
     istringstream iss2(line);
     if (command == "my_courses")
@@ -98,7 +85,7 @@ void Put::handle_my_courses(string line, vector<User *> &users, User *&currentUs
             currentStudent->add_lesson(chosenLesson);
             Notification newNotif = construct_notif(currentStudent, GET_COURSE_NOTIF);
             currentStudent->send_notif(newNotif);
-            cout << "OK" << endl;
+            successful_request();
         }
 
         else

@@ -117,3 +117,43 @@ Notification Method::construct_notif(User *userData, string message)
     notif.message = message;
     return notif;
 }
+
+bool Method::all_is_space(const std::string &line)
+{
+    bool isSpace = true;
+
+    for (char c : line)
+    {
+        if (c != SPACE)
+        {
+            isSpace = false;
+            break;
+        }
+    }
+
+    return isSpace;
+}
+
+void Method::check_question_mark(string &line)
+{
+    istringstream iss(line);
+    size_t i = line.find(QUESTION_MARK_STRING);
+    if (i != string::npos)
+    {
+        line = line.substr(i + 1);
+        while (!line.empty() && line[0] == QUESTION_MARK)
+        {
+            line = line.substr(1);
+        }
+    }
+
+    else
+    {
+        throw BadRequest();
+    }
+}
+
+void Method::successful_request()
+{
+    cout << SUCCESS_MESSAGE << endl;
+}
