@@ -26,4 +26,5 @@ public:
     bool all_is_space(const std::string& line);
     void check_question_mark(string &line);
     void successful_request();
+    string image_format(string line);
 };

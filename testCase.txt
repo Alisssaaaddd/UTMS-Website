@@ -1,0 +1,16 @@
+POST login ? id 810102999 password blabla
+POST post ? title "titre Zard   " image files/images/Mathilda.jpg message "what a beautiful liiiiiiiiife"
+POST post ? image files/images/Mathilda.jpg title " mosbat 18" message "join the chanell .jpg "
+POST post ? title "hehehe" message " nakhand dige" image ./files/images/leon the proffesional.jpg
+POST post ? message "kloop Raft" image ./files/images/Mathilda.jpg title "liverpool"
+POST post ? image ./files/images/files/leon the proffesional .jpg message "alisaaaaaa sa sad " title "sad hastam"
+POST post ? title "ye chizi " 
+POST post ? title " sydney is beautiful" image files/images/leon.jpeg
+POST post ? image files/images/leon  the  professional.jpg message "U is enough"
+POST post ? title "format kheili moheme" image files/images/sample1 message "didi goftam?"
+POST post ? title "Caption moheme kheili" message "shookhi kardam "
+POST profile_photo ? photo ye chizi ke path nist
+POST profile_photo ? photo files/images/sample1.webp
+POST profile_photo ? files/images/sample1.webp
+POST profile_photo ? photo files/images/sample1
+POST profile_photo ? photo files/images/leon  the  professional.jpg

@@ -18,6 +18,7 @@ protected:
     vector<Lesson *> activeLessons;
     vector<PostStruct> posts;
     vector<User *> connections;
+    string profile_photo_path;
 
 public:
     User(MD major_);
@@ -50,6 +51,8 @@ public:
     bool have_this_lesson(int lessId_);
     bool no_active_lessons();
     void display_all_lessons();
+    string get_profile_photo_path();
+    void set_profile(string newPath);
 };
 
 class Student : public User

@@ -18,6 +18,7 @@ string User::get_majorID() { return majorID; };
 string User::get_password() { return password; };
 bool User::signed_in() { return is_signed_in; };
 int User::get_postID() { return postID; };
+string User::get_profile_photo_path() {return profile_photo_path;};
 
 void User::login()
 {
@@ -238,6 +239,10 @@ void User::display_all_lessons()
     {
         l->display();
     }
+}
+
+void User::set_profile(string newPath){
+    profile_photo_path = newPath;
 }
 
 Student::Student(SD student, MD major_) : User(major_)

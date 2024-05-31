@@ -21,8 +21,10 @@ vector<string> Course::get_majors_id() { return majorsID; };
 
 bool Course::valid_major(string majorId_)
 {
-    for(auto m: majorsID){
-        if(m==majorId_){
+    for (auto m : majorsID)
+    {
+        if (m == majorId_)
+        {
             return true;
         }
     }
