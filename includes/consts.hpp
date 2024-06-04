@@ -71,16 +71,17 @@ struct LessonStruct {
 };
 
 struct Notification {
-    string id;
+    string id = "nothing";
     string name;
     string message;
 };
 
 struct PostStruct {
-    int id;
+    int id = -2;
     string title;
     string message;
     string image = "NO IMAGE";
+    string sender = "NO NAME";
 };
 
 const char COMMA = ',',
@@ -101,8 +102,10 @@ const string COURSE_OFFER_NOTIF = "New Course Offering";
 const string NEW_POST_NOTIF = "New Post";
 const string DELETE_COURSE_NOTIF = "Delete Course";
 const string GET_COURSE_NOTIF = "Get Course";
+const string NEW_COURSE_POST_NOTIF = "New Course Post";
 const string SUCCESS_MESSAGE = "OK";
 
 const vector<string> SUPPORTED_FORMATS = { ".jpg", ".JPG", ".GIF", ".gif", ".JPEG", ".jpeg",
-    ".PNG", ".png", ".WEBP", ".webp", ".XPS", ".xps" , ".tiff" , ".TIFF", ".svg" , ".SVG"};
+    ".PNG", ".png", ".WEBP", ".webp", ".XPS", ".xps", ".tiff", ".TIFF", ".svg", ".SVG" };
+
 const string INVALID_FORMAT = "foramt is not supported!";

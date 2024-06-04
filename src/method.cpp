@@ -140,9 +140,21 @@ string Method::image_format(string line)
 {
     for (string format : SUPPORTED_FORMATS) {
         size_t pos = line.find(format);
-        if (pos != string::npos){
+        if (pos != string::npos) {
             return format;
         }
     }
     return INVALID_FORMAT;
+}
+
+void Method::check_lesson_existance(int lessonID_, vector<Lesson*>& lessons)
+{
+    if (!lesson_exists(lessonID_, lessons))
+        throw Absence();
+}
+
+void Method::check_natural_number(string& id)
+{
+    if (!can_convert_to_int(id))
+        throw BadRequest();
 }

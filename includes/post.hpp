@@ -32,6 +32,9 @@ public:
     void handle_profile_photo(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
         vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
 
+    void handle_course_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+        vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
+
     bool course_exists(string courseId, vector<Course*> courses);
     bool is_prof(string userId, vector<User*> users);
     void connect_users(User* currentUser, User* chosenUser);
@@ -43,5 +46,12 @@ public:
     void handle_message_first(string& line, PostStruct& post);
     void handle_image_first(string& line, PostStruct& post);
     void send_post_notification(User*& currentUser, PostStruct& post, vector<User*>& users);
-    string read_profile_path(string &line);
+    string read_profile_path(string& line);
+    void handle_channel_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+        vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2, PostStruct& post);
+
+    void ta_post(User*& currentUser, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users);
+    void professor_post(Professor*& professor, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users, User* &currentUser);
+    void send_course_notif(vector<User*>& users, Lesson*& chosenLesson, User*& currentUser, Notification courseNotif);
+    Notification construct_course_notif(Lesson*& chosenLesson);
 };

@@ -65,6 +65,10 @@ void Post::identify_command(string line, vector<User*>& users, User*& currentUse
         handle_profile_photo(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
     }
 
+    else if (command == "course_post") {
+        handle_course_post(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
+    }
+
     else {
         throw Absence();
     }
@@ -568,17 +572,154 @@ void Post::handle_profile_photo(string line, vector<User*>& users, User*& curren
     }
 }
 
-string Post::read_profile_path(string &line)
+string Post::read_profile_path(string& line)
 {
-    size_t i = line.find("photo");
+    size_t i = line.find("photo ");
     line = line.substr(i + 6);
 
     string format = image_format(line);
-    if(format==INVALID_FORMAT){
+    if (format == INVALID_FORMAT) {
         throw BadRequest();
     }
     i = line.find(format);
     string path = line.substr(0, i + format.size());
     line = line.substr(i + format.size());
     return path;
+}
+
+void Post::handle_course_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+    vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
+{
+    if (currentUser == nullptr) {
+        throw Inaccessibility();
+    }
+
+    Manager* admin = dynamic_cast<Manager*>(currentUser);
+    if (admin) {
+        throw Inaccessibility();
+    }
+
+    PostStruct post;
+    handle_channel_post(line, users, currentUser, lessonID_, lessons, courses, majors, iss2, post);
+}
+
+void Post::handle_channel_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+    vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2, PostStruct& post)
+{
+    string lessId;
+    size_t pos = line.find(" id ");
+    if (pos == string::npos) {
+        throw BadRequest();
+    }
+
+    string tempLine = line.substr(pos + 3);
+    istringstream tempIss(tempLine);
+    tempIss >> lessId;
+    string firstPart = line.substr(0, pos);
+
+    pos = line.find(lessId);
+    string secondPart = line.substr(pos + lessId.length(), line.length());
+
+    line = firstPart + secondPart;
+    if (!can_convert_to_int(lessId)) {
+        throw BadRequest();
+    }
+
+    if (!lesson_exists(stoi(lessId), lessons)) {
+        throw Absence();
+    }
+
+    Lesson* chosenLesson = find_lesson_by_id(lessons, lessId);
+
+    Professor* professor = dynamic_cast<Professor*>(currentUser);
+    if (professor) {
+        professor_post(professor, chosenLesson, line, post, users, currentUser);
+    } else {
+        ta_post(currentUser, chosenLesson, line, post, users);
+    }
+}
+
+void Post::professor_post(Professor*& professor, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users, User*& currentUser)
+{
+    if (professor->get_id() != chosenLesson->get_prof_id()) {
+        throw Inaccessibility();
+    }
+    post.sender = professor->get_name();
+    istringstream iss(line);
+
+    string first_argument;
+    iss >> first_argument;
+    if (first_argument == "title") {
+        handle_title_first(line, post);
+    }
+
+    else if (first_argument == "message") {
+        handle_message_first(line, post);
+    }
+
+    else if (first_argument == "image") {
+        handle_image_first(line, post);
+    }
+
+    else {
+        throw BadRequest();
+    }
+
+    chosenLesson->add_post_to_channel(post);
+    Notification courseNotif = construct_course_notif(chosenLesson);
+    send_course_notif(users, chosenLesson, currentUser, courseNotif);
+    successful_request();
+}
+
+void Post::ta_post(User*& currentUser, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users)
+{
+    if (!chosenLesson->is_TA(currentUser->get_id())) {
+        throw Inaccessibility();
+    }
+    post.sender = currentUser->get_name();
+    istringstream iss(line);
+
+    string first_argument;
+    iss >> first_argument;
+    if (first_argument == "title") {
+        handle_title_first(line, post);
+    }
+
+    else if (first_argument == "message") {
+        handle_message_first(line, post);
+    }
+
+    else if (first_argument == "image") {
+        handle_image_first(line, post);
+    }
+
+    else {
+        throw BadRequest();
+    }
+
+    chosenLesson->add_post_to_channel(post);
+    Notification courseNotif = construct_course_notif(chosenLesson);
+    send_course_notif(users, chosenLesson, currentUser, courseNotif);
+    successful_request();
+}
+
+void Post::send_course_notif(vector<User*>& users, Lesson*& chosenLesson, User*& currentUser, Notification courseNotif)
+{
+    for (User* u : users) {
+        if (u->have_this_lesson(chosenLesson->get_lessonID()) || chosenLesson->is_TA(u->get_id())) {
+            if (u == currentUser) {
+                continue;
+            }
+            u->receive_notif(courseNotif);
+        }
+    }
+}
+
+Notification Post::construct_course_notif(Lesson*& chosenLesson)
+{
+    Notification courseNotif;
+    courseNotif.id = to_string(chosenLesson->get_lessonID());
+    courseNotif.name = chosenLesson->get_course_name();
+    courseNotif.message = NEW_COURSE_POST_NOTIF;
+    return courseNotif;
 }

@@ -27,4 +27,6 @@ public:
     void check_question_mark(string &line);
     void successful_request();
     string image_format(string line);
+    void check_lesson_existance(int lessonID_, vector<Lesson*> &lessons);
+    void check_natural_number(string &id);
 };

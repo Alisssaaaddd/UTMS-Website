@@ -3,8 +3,7 @@
 #include "../includes/consts.hpp"
 #include "../includes/course.hpp"
 
-class Lesson
-{
+class Lesson {
 private:
     string courseName;
     string profName;
@@ -17,9 +16,12 @@ private:
     string prereq;
     vector<string> majorsId;
     int lessonID;
+    vector<PostStruct> informing_channel;
+    vector<string> TA_IDs;
+    int postID;
 
 public:
-    Lesson(LessonStruct ls, int &lessonID);
+    Lesson(LessonStruct ls, int& lessonID);
     ~Lesson();
     string get_course_name();
     string get_prof_name();
@@ -37,4 +39,12 @@ public:
     void show_detailed();
     bool can_accept_this_major(string majorID_);
     void display();
+    bool is_TA(string studentId);
+    void add_post_to_channel(PostStruct& newPost);
+    void show_channel();
+    void show_channel_post(PostStruct cPost);
+    void show_channel_post_detailed(int postId_);
+    bool is_accessable(string userId, bool userHaveLesson);
+    bool course_post_exists(int postId_);
+    PostStruct find_course_post_by_postId(int postId_);
 };
