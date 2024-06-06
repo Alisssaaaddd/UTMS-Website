@@ -19,6 +19,7 @@ private:
     vector<PostStruct> informing_channel;
     vector<string> TA_IDs;
     int postID;
+    
 
 public:
     Lesson(LessonStruct ls, int& lessonID);
@@ -47,4 +48,6 @@ public:
     bool is_accessable(string userId, bool userHaveLesson);
     bool course_post_exists(int postId_);
     PostStruct find_course_post_by_postId(int postId_);
+    void add_TA(string TA_id);
+    bool can_accept_this_semester(string StuSemester);
 };

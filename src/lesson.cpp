@@ -120,3 +120,14 @@ PostStruct Lesson::find_course_post_by_postId(int postId_)
             return post;
     }
 }
+
+void Lesson::add_TA(string TA_id){
+    TA_IDs.push_back(TA_id);
+}
+
+bool Lesson::can_accept_this_semester(string StuSemester){
+    if(stoi(StuSemester)<=stoi(prereq)){
+        return false;
+    }
+    return true;
+}

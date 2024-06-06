@@ -66,10 +66,10 @@ void Get::show_all_lessons(vector<Lesson*>& lessons, vector<Course*>& courses)
     }
 }
 
-void Get::show_post(User* chosenUser, int postID_)
+void Get::show_post(User* chosenUser, int postID_, vector<Lesson*> &lessons)
 {
     chosenUser->show_personal_info();
-    chosenUser->show_post(postID_);
+    chosenUser->show_post(postID_, lessons);
 }
 
 void Get::handle_notif(string line, User*& currentUser)
@@ -98,14 +98,8 @@ void Get::handle_courses(string line, vector<User*>& users, User*& currentUser, 
 
     else {
         if (title == "id") {
-            if (!can_convert_to_int(key)) {
-                throw BadRequest();
-            }
-
-            if (!lesson_exists(stoi(key), lessons)) {
-                throw Absence();
-            }
-
+            check_natural_number(key);
+            check_lesson_existance(stoi(key), lessons);
             Lesson* chosenLesson = find_lesson_by_id(lessons, key);
             chosenLesson->show_detailed();
         } else {
@@ -131,10 +125,7 @@ void Get::handle_personal_page(string line, vector<User*>& users, User*& current
 
     else {
         if (title == "id") {
-            if (!can_convert_to_int(key)) {
-                throw BadRequest();
-            }
-
+            check_natural_number(key);
             if (!user_exists(key, users)) {
                 throw Absence();
             }
@@ -220,7 +211,7 @@ void Get::handle_post(string line, vector<User*>& users, User*& currentUser, int
         throw Absence();
     }
 
-    show_post(chosenUser, stoi(post.key));
+    show_post(chosenUser, stoi(post.key), lessons);
 }
 
 void Get::handle_course_channel(string line, vector<User*>& users, User*& currentUser, int& lessonID_,

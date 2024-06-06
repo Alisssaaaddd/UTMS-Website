@@ -78,10 +78,12 @@ struct Notification {
 
 struct PostStruct {
     int id = -2;
+    string type = "ordinary";
     string title;
     string message;
     string image = "NO IMAGE";
     string sender = "NO NAME";
+    string lessonId = "NO ID";
 };
 
 const char COMMA = ',',
@@ -102,8 +104,19 @@ const string COURSE_OFFER_NOTIF = "New Course Offering";
 const string NEW_POST_NOTIF = "New Post";
 const string DELETE_COURSE_NOTIF = "Delete Course";
 const string GET_COURSE_NOTIF = "Get Course";
+const string NEW_FORM_NOTIF = "New Form";
 const string NEW_COURSE_POST_NOTIF = "New Course Post";
+const string TA_REJECT_NOTIF = "Your request to be a teaching assistant has been rejected";
+const string TA_ACCEPT_NOTIF = "Your request to be a teaching assistant has been accepted";
 const string SUCCESS_MESSAGE = "OK";
+const string FORM_POST_PRE_TITLE = "TA form for ";
+const string FORM_POST_END_TITLE = " course";
+const string SHOW_REQUESTS_PRE_TITLE = "We have received ";
+const string SHOW_REQUESTS_END_TITLE = " requests for the teaching assistant position";
+const string ORD_POST_TYPE = "ordinary";
+const string TA_FORM_TYPE = "ta_form";
+const string REJECT_REPLY = "reject";
+const string ACCEPT_REPLY = "accept";
 
 const vector<string> SUPPORTED_FORMATS = { ".jpg", ".JPG", ".GIF", ".gif", ".JPEG", ".jpeg",
     ".PNG", ".png", ".WEBP", ".webp", ".XPS", ".xps", ".tiff", ".TIFF", ".svg", ".SVG" };

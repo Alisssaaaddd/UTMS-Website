@@ -2,6 +2,7 @@
 
 #include "../includes/consts.hpp"
 #include "../includes/major.hpp"
+#include "../includes/media.hpp"
 #include "../includes/method.hpp"
 
 class Post : public Method {
@@ -35,6 +36,15 @@ public:
     void handle_course_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
         vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
 
+    void handle_ta_form(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+        vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
+
+    void handle_closing_ta_form(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+        vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
+
+    void handle_ta_request(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+        vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
+
     bool course_exists(string courseId, vector<Course*> courses);
     bool is_prof(string userId, vector<User*> users);
     void connect_users(User* currentUser, User* chosenUser);
@@ -51,7 +61,13 @@ public:
         vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2, PostStruct& post);
 
     void ta_post(User*& currentUser, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users);
-    void professor_post(Professor*& professor, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users, User* &currentUser);
+    void professor_post(Professor*& professor, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users, User*& currentUser);
     void send_course_notif(vector<User*>& users, Lesson*& chosenLesson, User*& currentUser, Notification courseNotif);
     Notification construct_course_notif(Lesson*& chosenLesson);
+    Lesson* read_course_id(istringstream& iss2, string& id_, vector<Lesson*>& lessons, User*& currentUser);
+    void close_ta_form(Professor*& prof, vector<User*>& users, string id);
+    void check_is_professor(string profID, vector<User*>& users);
+    void check_form_existance(Professor*& prof, string formID);
+    void add_new_ta_request(istringstream& iss2, vector<User*>& users, Student*& student);
+    void pre_check_for_ta_request(User*& currentUser);
 };

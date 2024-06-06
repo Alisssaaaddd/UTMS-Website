@@ -69,6 +69,18 @@ void Post::identify_command(string line, vector<User*>& users, User*& currentUse
         handle_course_post(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
     }
 
+    else if (command == "ta_form") {
+        handle_ta_form(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
+    }
+
+    else if (command == "close_ta_form") {
+        handle_closing_ta_form(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
+    }
+
+    else if (command == "ta_request") {
+        handle_ta_request(line, users, currentUser, lessonID_, lessons, courses, majors, iss2);
+    }
+
     else {
         throw Absence();
     }
@@ -167,14 +179,15 @@ void Post::handle_course_offer(string line, vector<User*>& users, User*& current
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors)
 {
     vector<string> parts = split(line, SPACE);
+    parts.erase(parts.begin());
     LessonStruct lesson;
     lesson.lessonID = lessonID_;
     int i = 0;
-    if (parts.size() != 13) {
+    if (parts.size() != 12) {
         throw BadRequest();
     }
 
-    for (int i = 1; i < 13; i += 2) {
+    for (int i = 1; i < 12; i += 2) {
         if (parts[i] == "course_id") {
             if (course_exists(parts[i + 1], courses)) {
                 lesson.courseId = parts[i + 1];
@@ -398,10 +411,12 @@ void Post::read_post_message(string& line, PostStruct& post)
 void Post::read_post_image(string& line, PostStruct& post)
 {
     size_t i = line.find("image");
-    line = line.substr(i + 6);
+    line = line.substr(i + 5);
+    istringstream iss(line);
+    iss>>post.image;
 
     string format = image_format(line);
-    i = line.find(format);
+    // i = line.find(format);
     string path = line.substr(0, i + format.size());
     post.image = path;
     line = line.substr(i + format.size());
@@ -722,4 +737,212 @@ Notification Post::construct_course_notif(Lesson*& chosenLesson)
     courseNotif.name = chosenLesson->get_course_name();
     courseNotif.message = NEW_COURSE_POST_NOTIF;
     return courseNotif;
+}
+
+void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+    vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
+{
+    if (currentUser == nullptr) {
+        throw Inaccessibility();
+    }
+
+    Manager* admin = dynamic_cast<Manager*>(currentUser);
+    if (admin) {
+        throw Inaccessibility();
+    }
+
+    Student* student = dynamic_cast<Student*>(currentUser);
+    if (student) {
+        throw Inaccessibility();
+    }
+
+    PostStruct formPost;
+    Argument first;
+    Argument second;
+    iss2 >> first.title;
+    if (first.title == "course_id") {
+        iss2 >> first.key;
+        check_lesson_existance(stoi(first.key), lessons);
+        Lesson* chosenLesson = read_course_id(iss2, second.key, lessons, currentUser);
+        iss2 >> second.title;
+        if (second.title == "message") {
+            line = line.substr(line.find("message"));
+            read_post_message(line, formPost);
+            Professor* prof = dynamic_cast<Professor*>(currentUser);
+            formPost.title = FORM_POST_PRE_TITLE + chosenLesson->get_course_name() + FORM_POST_END_TITLE;
+            formPost.id = prof->get_postID();
+            prof->add_post(formPost);
+            prof->add_ta_form(new TaForm(formPost, chosenLesson));
+            Notification TaFormNotif = construct_notif(prof, NEW_FORM_NOTIF);
+            prof->send_notif(TaFormNotif);
+            /**********************here need more attention**********************/
+            successful_request();
+        } else {
+            throw BadRequest();
+        }
+    }
+
+    else if (first.title == "message") {
+        line = line.substr(line.find("message"));
+        read_post_message(line, formPost);
+        istringstream iss3(line);
+        iss3 >> second.title;
+        if (second.title == "course_id") {
+            iss3 >> second.key;
+            check_lesson_existance(stoi(second.key), lessons);
+            Lesson* chosenLesson = read_course_id(iss2, second.key, lessons, currentUser);
+            Professor* prof = dynamic_cast<Professor*>(currentUser);
+            formPost.title = FORM_POST_PRE_TITLE + chosenLesson->get_course_name() + FORM_POST_END_TITLE;
+            formPost.id = prof->get_postID();
+            prof->add_post(formPost);
+            prof->add_ta_form(new TaForm(formPost, chosenLesson));
+            Notification TaFormNotif = construct_notif(prof, NEW_FORM_NOTIF);
+            prof->send_notif(TaFormNotif);
+            /**********************here need more attention**********************/
+            successful_request();
+        } else {
+            throw BadRequest();
+        }
+    }
+
+    else {
+        throw BadRequest();
+    }
+}
+
+Lesson* Post::read_course_id(istringstream& iss2, string& id_, vector<Lesson*>& lessons, User*& currentUser)
+{
+    iss2 >> id_;
+    check_natural_number(id_);
+    check_lesson_existance(stoi(id_), lessons);
+    if (!currentUser->have_this_lesson(stoi(id_))) {
+        throw Inaccessibility();
+    }
+    Lesson* chosenLesson = find_lesson_by_id(lessons, id_);
+    return chosenLesson;
+}
+
+void Post::handle_closing_ta_form(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+    vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
+{
+    if (currentUser == nullptr) {
+        throw Inaccessibility();
+    }
+
+    Manager* admin = dynamic_cast<Manager*>(currentUser);
+    if (admin) {
+        throw Inaccessibility();
+    }
+
+    Student* student = dynamic_cast<Student*>(currentUser);
+    if (student) {
+        throw Inaccessibility();
+    }
+
+    Professor* prof = dynamic_cast<Professor*>(currentUser);
+
+    string title;
+    string id;
+    iss2 >> title;
+    iss2 >> id;
+    if (title == "id") {
+        check_natural_number(id);
+        if (!prof->have_this_post(stoi(id)))
+            throw Absence();
+        close_ta_form(prof, users, id);
+    } else {
+        throw BadRequest();
+    }
+}
+
+void Post::close_ta_form(Professor*& prof, vector<User*>& users, string id)
+{
+    prof->show_number_of_requests(stoi(id));
+    prof->handle_requests_of_form(stoi(id));
+    prof->send_reject_notifs(users, id);
+    prof->send_accept_notifs(users, id);
+    prof->delete_post(stoi(id));
+    prof->delete_ta_form(stoi(id));
+}
+
+void Post::handle_ta_request(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
+    vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
+{
+    pre_check_for_ta_request(currentUser);
+    Student* student = dynamic_cast<Student*>(currentUser);
+
+    string first_argument;
+    iss2 >> first_argument;
+    if (first_argument == "professor_id") {
+        add_new_ta_request(iss2, users, student);
+    }
+
+    else {
+        throw BadRequest();
+    }
+}
+
+void Post::check_is_professor(string profID, vector<User*>& users)
+{
+    if (!is_prof(profID, users)) {
+        throw Absence();
+    }
+}
+
+void Post::check_form_existance(Professor*& prof, string formID)
+{
+    if (!prof->have_this_post(stoi(formID))) {
+        throw BadRequest();
+    }
+
+    if (!prof->have_this_form(stoi(formID))) {
+        throw BadRequest();
+    }
+}
+
+void Post::add_new_ta_request(istringstream& iss2, vector<User*>& users, Student*& student)
+{
+    string profID;
+    iss2 >> profID;
+    check_natural_number(profID);
+    check_is_professor(profID, users);
+    User* u = find_user_by_id(profID, users);
+    Professor* prof = dynamic_cast<Professor*>(u);
+
+    string second_argument;
+    iss2 >> second_argument;
+    if (second_argument == "form_id") {
+        string formID;
+        iss2 >> formID;
+        check_natural_number(formID);
+        check_form_existance(prof, formID);
+        TaForm* taForm = prof->find_ta_form_by_id(stoi(formID));
+        Lesson* chosenLesson = taForm->get_lesson();
+        if (!chosenLesson->can_accept_this_semester(student->get_semester())) {
+            throw Inaccessibility();
+        }
+        StudentData studentStruct = student->get_studentData();
+        taForm->add_new_request(studentStruct);
+        successful_request();
+
+    } else {
+        throw BadRequest();
+    }
+}
+
+void Post::pre_check_for_ta_request(User* &currentUser)
+{
+    if (currentUser == nullptr) {
+        throw Inaccessibility();
+    }
+
+    Manager* admin = dynamic_cast<Manager*>(currentUser);
+    if (admin) {
+        throw Inaccessibility();
+    }
+
+    Professor* prof = dynamic_cast<Professor*>(currentUser);
+    if (prof) {
+        throw Inaccessibility();
+    }
 }

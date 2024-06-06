@@ -13,7 +13,7 @@ public:
     void identify_command(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
         vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors);
     void handle_notif(string line, User*& currentUser);
-    void show_post(User* chosenUser, int postID_);
+    void show_post(User* chosenUser, int postID_, vector<Lesson*> &lessons);
     void handle_courses(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
         vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2);
 
