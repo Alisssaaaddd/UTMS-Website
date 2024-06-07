@@ -95,8 +95,7 @@ Not Found
 1 Advanced Programming 70 Sarah Williams Sunday:13-15 1403/4/4 3
 2 Sarah Williams "Homework yohahahaha" "Phaffffse 2"
 Not Found
-1 Advanced Programming 70 Sarah Williams Sunday:13-15 1403/4/4 3
-2 Sarah Williams "Homework yohahahaha" "Phaffffse 2"
+Bad Request
 2 Web Development 70 Sarah Williams Sunday:15-16 1403/4/6 3
 1 Sarah Williams "Homework 6" "Phase 2"
 2 Web Development 70 Sarah Williams Sunday:15-16 1403/4/6 3

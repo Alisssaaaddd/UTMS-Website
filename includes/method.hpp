@@ -29,4 +29,10 @@ public:
     string image_format(string line);
     void check_lesson_existance(int lessonID_, vector<Lesson*> &lessons);
     void check_natural_number(string &id);
+    void check_next_is_nothing(istringstream &iss, string end);
+    void check_next_is_something(string line);
+    void check_user_loged_in(User*& currentUser);
+    void restrict_admin(User* &currentUser);
+    void restrict_students(User*& currentUser);
+    void check_user_existance(string userId_, vector<User*>& users);
 };

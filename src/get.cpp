@@ -74,9 +74,7 @@ void Get::show_post(User* chosenUser, int postID_, vector<Lesson*>& lessons)
 
 void Get::handle_notif(string line, User*& currentUser)
 {
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+    check_user_loged_in(currentUser);
 
     if (line != EMPTY and !all_is_space(line)) {
         throw BadRequest();
@@ -115,9 +113,7 @@ void Get::handle_personal_page(string line, vector<User*>& users, User*& current
     string key;
     iss2 >> title;
     iss2 >> key;
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+check_user_loged_in(currentUser);
 
     if (line == EMPTY || all_is_space(line)) {
         throw BadRequest();
@@ -126,10 +122,7 @@ void Get::handle_personal_page(string line, vector<User*>& users, User*& current
     else {
         if (title == "id") {
             check_natural_number(key);
-            if (!user_exists(key, users)) {
-                throw Absence();
-            }
-
+            check_user_existance(key, users);
             User* chosenUser = find_user_by_id(key, users);
             chosenUser->show_personal_page();
         }
@@ -147,9 +140,7 @@ void Get::handle_my_courses(string line, vector<User*>& users, User*& currentUse
         throw BadRequest();
     }
 
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+check_user_loged_in(currentUser);
 
     if (currentUser->no_active_lessons()) {
         throw EmptyException();
@@ -167,9 +158,7 @@ void Get::handle_post(string line, vector<User*>& users, User*& currentUser, int
     string key;
     iss2 >> title;
     iss2 >> key;
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+    check_user_loged_in(currentUser);
 
     if (title == "id") {
         user.title = title;
@@ -215,9 +204,7 @@ void Get::handle_post(string line, vector<User*>& users, User*& currentUser, int
 void Get::handle_course_channel(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
 {
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+    check_user_loged_in(currentUser);
 
     Manager* admin = dynamic_cast<Manager*>(currentUser);
     if (admin)
@@ -246,17 +233,13 @@ void Get::handle_course_channel(string line, vector<User*>& users, User*& curren
 void Get::handle_course_post(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
 {
-    if (currentUser == nullptr) {
-        throw Inaccessibility();
-    }
+    check_user_loged_in(currentUser);
 
     Manager* admin = dynamic_cast<Manager*>(currentUser);
     if (admin)
         throw Inaccessibility();
 
-    if (line == EMPTY || all_is_space(line)) {
-        throw BadRequest();
-    }
+    check_next_is_something(line);
     string lessId;
     size_t pos = line.find(" id");
     if (pos == string::npos) {
@@ -271,17 +254,16 @@ void Get::handle_course_post(string line, vector<User*>& users, User*& currentUs
     if (!chosenLesson->is_accessable(currentUser->get_id(), currentUser->have_this_lesson(stoi(lessId))))
         throw Inaccessibility();
     string firstPart = line.substr(0, pos);
-
-    pos = line.find(lessId);
-    string secondPart = line.substr(pos + lessId.length(), line.length());
+    string secondPart = line.substr(pos + lessId.length() + 4, line.length());
 
     line = firstPart + secondPart;
-
     istringstream iss(line);
     Argument post;
+    string end;
     iss >> post.title;
     iss >> post.key;
-
+    iss >> end;
+    check_next_is_nothing(iss2, end);
     if (post.title == "post_id") {
         check_natural_number(post.key);
         if (!chosenLesson->course_post_exists(stoi(post.key))) {

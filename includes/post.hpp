@@ -70,4 +70,9 @@ public:
     void check_form_existance(Professor*& prof, string formID);
     void add_new_ta_request(istringstream& iss2, vector<User*>& users, Student*& student);
     void pre_check_for_ta_request(User*& currentUser);
+    void read_course_id_for_course_offer(vector<Course*>& courses, LessonStruct& lesson, string& nextPart);
+    void read_professor_id_for_course_offer(string& nextPart, LessonStruct& lesson, vector<User*>& users);
+    void read_time_for_course_offer(LessonStruct& lesson, string& nextPart);
+    void first_handle_course_id_for_ta_form(Argument& first, Argument& second, vector<Lesson*>& lessons, User*& currentUser, PostStruct& formPost, istringstream& iss2, string& line);
+    void first_handle_message_for_ta_form(Argument& first, Argument& second, vector<Lesson*>& lessons, User*& currentUser, PostStruct& formPost, istringstream& iss2, string& line);
 };

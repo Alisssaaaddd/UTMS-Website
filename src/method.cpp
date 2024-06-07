@@ -157,7 +157,48 @@ void Method::check_lesson_existance(int lessonID_, vector<Lesson*>& lessons)
 void Method::check_natural_number(string& id)
 {
     if (!can_convert_to_int(id)) {
-        cout << "addad nemishe: " << id << endl;
         throw BadRequest();
+    }
+}
+
+void Method::check_next_is_nothing(istringstream& iss, string end)
+{
+    if (end != EMPTY) {
+        throw BadRequest();
+    }
+}
+
+void Method::check_next_is_something(string line)
+{
+    if (line == EMPTY || all_is_space(line)) {
+        throw BadRequest();
+    }
+}
+
+void Method::check_user_loged_in(User*& currentUser)
+{
+    if (currentUser == nullptr) {
+        throw Inaccessibility();
+    }
+}
+
+void Method::restrict_admin(User* &currentUser)
+{
+    Manager* admin = dynamic_cast<Manager*>(currentUser);
+    if (admin) {
+        throw Inaccessibility();
+    }
+}
+
+void Method::restrict_students(User* &currentUser){
+    Student* student = dynamic_cast<Student*>(currentUser);
+    if (student) {
+        throw Inaccessibility();
+    }
+}
+
+void Method::check_user_existance(string userId_, vector<User*> &users){
+    if (!user_exists(userId_, users)) {
+        throw Absence();
     }
 }

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -g -Wall -Wextra -I./include
+CXXFLAGS = -std=c++20 -g -Wall -w -Wextra -I./include
 
 LFLAGS = -L./files
 
