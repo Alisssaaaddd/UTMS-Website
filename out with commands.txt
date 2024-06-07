@@ -91,11 +91,11 @@ OK
 Not Found
 ------------------ command: POST course_post ? id 2 title "Homework 6" message "Phase 2"
 OK
------------------- command: POST course_post ? id 1 title "Homework 6" message "Phaffffse 2" image ./sdvihv/ddfdd
+------------------ command: POST course_post ? id 1 title "Homework 6" message "Phaffffse 2" image ./sdvihv/ddfdd.png
 OK
 ------------------ command: POST course_post ? id 2 title "Homework 7777" message "pareh in 2"
 OK
------------------- command: POST course_post ? id 1 image ./sdvihv/ddfdd title "Homework yohahahaha" message "Phaffffse 2"
+------------------ command: POST course_post ? id 1 image ./sdvihv/ddfdd.png title "Homework yohahahaha" message "Phaffffse 2"
 OK
 ------------------ command: GET notification ?
 810420436 Sarah Williams: New Course Offering
@@ -323,7 +323,7 @@ OK
 OK
 ------------------ command: GET notification ?
 2 Web Development: Your request to be a teaching assistant has been accepted.
------------------- command: POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd
+------------------ command: POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd.png
 Permission Denied
 ------------------ command: POST course_post ? id 2 title "ddvvd ccsd" message "sdvccccdsvc dssd"
 OK
@@ -336,7 +336,7 @@ OK
 1 Advanced Programming: Your request to be a teaching assistant has been accepted.
 810420436 Sarah Williams: New Course Offering
 810420436 Sarah Williams: New Course Offering
------------------- command: POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd
+------------------ command: POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd.png
 OK
 ------------------ command: POST course_post ? id 2 title "ddvvd ccsd" message "sdvccccdsvc dssd"
 Permission Denied

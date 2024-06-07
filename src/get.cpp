@@ -66,7 +66,7 @@ void Get::show_all_lessons(vector<Lesson*>& lessons, vector<Course*>& courses)
     }
 }
 
-void Get::show_post(User* chosenUser, int postID_, vector<Lesson*> &lessons)
+void Get::show_post(User* chosenUser, int postID_, vector<Lesson*>& lessons)
 {
     chosenUser->show_personal_info();
     chosenUser->show_post(postID_, lessons);
@@ -115,12 +115,12 @@ void Get::handle_personal_page(string line, vector<User*>& users, User*& current
     string key;
     iss2 >> title;
     iss2 >> key;
-    if (line == EMPTY) {
-        throw BadRequest();
-    }
-
     if (currentUser == nullptr) {
         throw Inaccessibility();
+    }
+
+    if (line == EMPTY || all_is_space(line)) {
+        throw BadRequest();
     }
 
     else {
@@ -202,10 +202,8 @@ void Get::handle_post(string line, vector<User*>& users, User*& currentUser, int
     }
 
     User* chosenUser = find_user_by_id(user.key, users);
-
-    if (!can_convert_to_int(post.key) || !can_convert_to_int(user.key)) {
-        throw BadRequest();
-    }
+    check_natural_number(post.key);
+    check_natural_number(user.key);
 
     if (!chosenUser->have_this_post(stoi(post.key))) {
         throw Absence();
@@ -232,7 +230,7 @@ void Get::handle_course_channel(string line, vector<User*>& users, User*& curren
     string title;
     string id;
     iss2 >> title;
-    if (title == " id ") {
+    if (title == "id") {
         iss2 >> id;
         check_natural_number(id);
         check_lesson_existance(stoi(id), lessons);
@@ -259,31 +257,37 @@ void Get::handle_course_post(string line, vector<User*>& users, User*& currentUs
     if (line == EMPTY || all_is_space(line)) {
         throw BadRequest();
     }
-
-    Argument first;
-    Argument second;
-
-    iss2 >> first.title;
-    if (first.title == "id") {
-        iss2 >> first.key;
-        check_natural_number(first.key);
-        check_lesson_existance(stoi(first.key), lessons);
-        Lesson* chosenLesson = find_lesson_by_id(lessons, first.key);
-        if (!chosenLesson->is_accessable(currentUser->get_id(), currentUser->have_this_lesson(stoi(first.key))))
-            throw Inaccessibility();
-        iss2 >> second.title;
-        if (second.title == "post_id") {
-            iss2 >> second.key;
-            check_natural_number(second.key);
-            if (!chosenLesson->course_post_exists(stoi(second.key))) {
-                throw Absence();
-            }
-            chosenLesson->show_channel_post_detailed(stoi(second.key));
-        } else
-            throw BadRequest();
-    }
-
-    else {
+    string lessId;
+    size_t pos = line.find(" id");
+    if (pos == string::npos) {
         throw BadRequest();
     }
+    string tempLine = line.substr(pos + 3);
+    istringstream tempIss(tempLine);
+    tempIss >> lessId;
+    check_natural_number(lessId);
+    check_lesson_existance(stoi(lessId), lessons);
+    Lesson* chosenLesson = find_lesson_by_id(lessons, lessId);
+    if (!chosenLesson->is_accessable(currentUser->get_id(), currentUser->have_this_lesson(stoi(lessId))))
+        throw Inaccessibility();
+    string firstPart = line.substr(0, pos);
+
+    pos = line.find(lessId);
+    string secondPart = line.substr(pos + lessId.length(), line.length());
+
+    line = firstPart + secondPart;
+
+    istringstream iss(line);
+    Argument post;
+    iss >> post.title;
+    iss >> post.key;
+
+    if (post.title == "post_id") {
+        check_natural_number(post.key);
+        if (!chosenLesson->course_post_exists(stoi(post.key))) {
+            throw Absence();
+        }
+        chosenLesson->show_channel_post_detailed(stoi(post.key));
+    } else
+        throw BadRequest();
 }

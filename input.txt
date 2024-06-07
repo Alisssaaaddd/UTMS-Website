@@ -1,8 +1,8 @@
 POST login ? password randompass2 id 810102456
 GET personal_page ? id 810102456
 POST connect ? id 810102789
-POST post ? title "title1" image xyz/dhd/kkk message "dkooooooo azizammm !!!!! khkhkhkhkh@!"
-POST post ? title "title1" image xyz/dhd/kkk
+POST post ? title "title1" image xyz/dhd/kkk.png message "dkooooooo azizammm !!!!! khkhkhkhkh@!"
+POST post ? title "title1" image xyz/dhd/kkk.png
 POST post ? title "title1" message "jygjyjyjt trrub tf rrrrrr"
 GET personal_page ? id 810102456
 GET post ? post_id 1 id 810102456
@@ -41,9 +41,9 @@ POST logout ?
 POST login ? password jkl012 id 810420436
 POST course_post ? id 4 title "Homework 6" message "Phase 2"
 POST course_post ? id 2 title "Homework 6" message "Phase 2"
-POST course_post ? id 1 title "Homework 6" message "Phaffffse 2" image ./sdvihv/ddfdd
+POST course_post ? id 1 title "Homework 6" message "Phaffffse 2" image ./sdvihv/ddfdd.png
 POST course_post ? id 2 title "Homework 7777" message "pareh in 2"
-POST course_post ? id 1 image ./sdvihv/ddfdd title "Homework yohahahaha" message "Phaffffse 2"
+POST course_post ? id 1 image ./sdvihv/ddfdd.png title "Homework yohahahaha" message "Phaffffse 2"
 GET notification ?
 POST logout ?
 POST login ? password meoow id 810102342
@@ -140,10 +140,10 @@ GET personal_page ? id 810420436
 POST logout ?
 POST login ? password randompass3 id 810102789
 GET notification ?
-POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd
+POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd.png
 POST course_post ? id 2 title "ddvvd ccsd" message "sdvccccdsvc dssd"
 POST logout ?
 POST login ? password randompass2 id 810102456
 GET notification ?
-POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd
+POST course_post ? id 1 title "ddvvd sd" message "sdvcdsvc dssd" image sdvsdv/dsd.png
 POST course_post ? id 2 title "ddvvd ccsd" message "sdvccccdsvc dssd"

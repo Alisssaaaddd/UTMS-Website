@@ -99,11 +99,11 @@ string User::lessons_in_line()
 
 void User::show_post_titles()
 {
-    for (PostStruct p : posts) {
-        if (p.type == ORD_POST_TYPE)
-            cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << endl;
-        else if (p.type == TA_FORM_TYPE)
-            cout << p.id << SPACE << p.title << endl;
+    for (int i = posts.size() - 1; i >= 0; i--) {
+        if (posts[i].type == ORD_POST_TYPE)
+            cout << posts[i].id << SPACE << DOUBLE_QUOTATION << posts[i].title << DOUBLE_QUOTATION << endl;
+        else if (posts[i].type == TA_FORM_TYPE)
+            cout << posts[i].id << SPACE << posts[i].title << endl;
     }
 }
 
@@ -119,7 +119,6 @@ void User::show_post(int postID_, vector<Lesson*>& lessons)
                 cout << p.id << SPACE << DOUBLE_QUOTATION << p.title << DOUBLE_QUOTATION << SPACE;
                 cout << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
             } else if (p.type == TA_FORM_TYPE) {
-                show_personal_info();
                 cout << p.id << SPACE << p.title << endl;
                 show_lesson_info(lessons, stoi(p.lessonId));
                 cout << DOUBLE_QUOTATION << p.message << DOUBLE_QUOTATION << endl;
@@ -241,6 +240,7 @@ void User::set_profile(string newPath)
 Student::Student(SD student, MD major_)
     : User(major_)
 {
+    studentStruct = student;
     ID = student.SID;
     name = student.name;
     majorID = student.majorID;
@@ -283,7 +283,7 @@ bool Student::exam_interfers(string examDate_)
 }
 
 StudentData Student::get_studentData() { return studentStruct; };
-string Student::get_semester(){return semester;};
+string Student::get_semester() { return semester; };
 
 Professor::Professor(PD professor, MD major_)
     : User(major_)
@@ -318,70 +318,60 @@ void Professor::add_ta_form(TaForm* newForm)
 
 void Professor::show_number_of_requests(int formId)
 {
-    for (TaForm* tf : forms) {
-        if (tf->get_id() == formId) {
-            tf->display_number_of_requests();
-        }
-    }
+    TaForm* form = find_ta_form_by_id(formId);
+    form->display_number_of_requests();
 }
 
 void Professor::handle_requests_of_form(int formId)
 {
-    for (TaForm* tf : forms) {
-        if (tf->get_id() == formId) {
-            tf->close();
-            tf->judge_requests();
-        }
-    }
+    TaForm* form = find_ta_form_by_id(formId);
+    form->close();
+    form->judge_requests();
 }
 
 void Professor::send_reject_notifs(vector<User*>& users, string formId)
 {
-    Notification rejectNotif;
-    rejectNotif.message = TA_REJECT_NOTIF;
     vector<StudentData> rejected_users;
-    Lesson* chosenLesson;
-    for (TaForm* form : forms) {
-        if (form->get_id() == stoi(formId)) {
-            rejected_users = form->get_rejected();
-            form->reset_requests();
-            chosenLesson = form->get_lesson();
-        }
-    }
-    rejectNotif.id = chosenLesson->get_lessonID();
-    rejectNotif.name = chosenLesson->get_course_name();
+    TaForm* taForm = find_ta_form_by_id(stoi(formId));
+    Lesson* chosenLesson = taForm->get_lesson();
+    rejected_users = taForm->get_rejected();
+    Notification rejectNotif = construct_notif(chosenLesson, TA_REJECT_NOTIF);
+
     for (StudentData s : rejected_users) {
         for (User* user : users) {
             if (user->get_id() == s.SID) {
                 user->receive_notif(rejectNotif);
-                chosenLesson->add_TA(user->get_id());
             }
         }
     }
+    taForm->reset_rejected();
 }
 
 void Professor::send_accept_notifs(vector<User*>& users, string formId)
 {
-    Notification acceptNotif;
-    acceptNotif.message = TA_ACCEPT_NOTIF;
     vector<StudentData> accepted_users;
-    Lesson* chosenLesson;
-    for (TaForm* form : forms) {
-        if (form->get_id() == stoi(formId)) {
-            accepted_users = form->get_rejected();
-            form->reset_requests();
-            chosenLesson = form->get_lesson();
-        }
-    }
-    acceptNotif.id = chosenLesson->get_lessonID();
-    acceptNotif.name = chosenLesson->get_course_name();
+    TaForm* taForm = find_ta_form_by_id(stoi(formId));
+    Lesson* chosenLesson = taForm->get_lesson();
+    accepted_users = taForm->get_accepted();
+    Notification acceptNotif = construct_notif(chosenLesson, TA_ACCEPT_NOTIF);
+
     for (StudentData s : accepted_users) {
         for (User* user : users) {
             if (user->get_id() == s.SID) {
                 user->receive_notif(acceptNotif);
+                chosenLesson->add_TA(user->get_id());
             }
         }
     }
+    taForm->reset_accepted();
+}
+
+Notification Professor::construct_notif(Lesson* &chosenLesson, string message){
+    Notification acceptNotif;
+    acceptNotif.id = to_string(chosenLesson->get_lessonID());
+    acceptNotif.name = chosenLesson->get_course_name();
+    acceptNotif.message = message;
+    return acceptNotif;
 }
 
 void Professor::delete_ta_form(int formId)

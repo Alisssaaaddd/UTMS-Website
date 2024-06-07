@@ -90,6 +90,7 @@ public:
     void delete_ta_form(int formId);
     TaForm* find_ta_form_by_id(int formID);
     bool have_this_form(int formID);
+    Notification construct_notif(Lesson*& chosenLesson, string message);
 };
 
 class Manager : public User {

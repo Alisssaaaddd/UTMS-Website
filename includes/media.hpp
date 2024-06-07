@@ -38,4 +38,5 @@ public:
     void reset_rejected();
     void reset_accepted();
     void add_new_request(StudentData stu);
+    void take_reply(StudentData& stu);
 };

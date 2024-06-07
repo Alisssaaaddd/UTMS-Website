@@ -10,11 +10,12 @@ Media::~Media()
 {
 }
 
-string Media::get_type(){return type;};
-PostStruct Media::get_mediaPost(){return mediaPost;};
-int Media::get_id(){return id;};
+string Media::get_type() { return type; };
+PostStruct Media::get_mediaPost() { return mediaPost; };
+int Media::get_id() { return id; };
 
-TaForm::TaForm(PostStruct formPost_, Lesson* &chosenLessson) : Media(formPost_)
+TaForm::TaForm(PostStruct formPost_, Lesson*& chosenLessson)
+    : Media(formPost_)
 {
     type = TA_FORM_TYPE;
     lesson = chosenLessson;
@@ -25,53 +26,67 @@ TaForm::~TaForm()
 {
 }
 
-void TaForm::display_number_of_requests(){
+void TaForm::display_number_of_requests()
+{
     cout << SHOW_REQUESTS_PRE_TITLE << requests.size() << SHOW_REQUESTS_END_TITLE << endl;
 }
 
-void TaForm::judge_requests(){
+void TaForm::judge_requests()
+{
+    for (StudentData stu : requests) {
+        take_reply(stu);
+    }
+    reset_requests();
+}
+
+void TaForm::take_reply(StudentData& stu)
+{
+    bool reply_found = false;
     string reply;
-    for(StudentData stu: requests){
+    while (!reply_found) {
         display_student_data(stu);
         getline(cin, reply);
-        if(reply== ACCEPT_REPLY){
+        if (reply == ACCEPT_REPLY) {
             accepted.push_back(stu);
-        }
-        else if(reply == REJECT_REPLY){
+            reply_found = true;
+        } else if (reply == REJECT_REPLY) {
             rejected.push_back(stu);
-        }
-        else{
-            display_student_data(stu);
-            getline(cin, reply);
+            reply_found = true;
         }
     }
 }
 
-void TaForm::display_student_data(StudentData stu){
+void TaForm::display_student_data(StudentData stu)
+{
     cout << stu.SID << SPACE << stu.name << SPACE << stu.semester << COLON << SPACE;
 }
 
-Lesson* TaForm::get_lesson(){return lesson;};
+Lesson* TaForm::get_lesson() { return lesson; };
 
-void TaForm::close(){
+void TaForm::close()
+{
     is_open = false;
 }
 
-vector<StudentData> TaForm::get_rejected(){return rejected;};
-vector<StudentData> TaForm::get_accepted(){return accepted;};
+vector<StudentData> TaForm::get_rejected() { return rejected; };
+vector<StudentData> TaForm::get_accepted() { return accepted; };
 
-void TaForm::reset_requests(){
-    requests.clear();    
+void TaForm::reset_requests()
+{
+    requests.clear();
 }
 
-void TaForm::reset_accepted(){
+void TaForm::reset_accepted()
+{
     accepted.clear();
 }
 
-void TaForm::reset_rejected(){
+void TaForm::reset_rejected()
+{
     rejected.clear();
 }
 
-void TaForm::add_new_request(StudentData stu){
+void TaForm::add_new_request(StudentData stu)
+{
     requests.push_back(stu);
 }

@@ -64,7 +64,7 @@ public:
     void professor_post(Professor*& professor, Lesson*& chosenLesson, string& line, PostStruct& post, vector<User*>& users, User*& currentUser);
     void send_course_notif(vector<User*>& users, Lesson*& chosenLesson, User*& currentUser, Notification courseNotif);
     Notification construct_course_notif(Lesson*& chosenLesson);
-    Lesson* read_course_id(istringstream& iss2, string& id_, vector<Lesson*>& lessons, User*& currentUser);
+    Lesson* read_course_id(string& id_, vector<Lesson*>& lessons, User*& currentUser);
     void close_ta_form(Professor*& prof, vector<User*>& users, string id);
     void check_is_professor(string profID, vector<User*>& users);
     void check_form_existance(Professor*& prof, string formID);

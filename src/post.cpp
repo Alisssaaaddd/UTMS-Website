@@ -179,15 +179,14 @@ void Post::handle_course_offer(string line, vector<User*>& users, User*& current
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors)
 {
     vector<string> parts = split(line, SPACE);
-    parts.erase(parts.begin());
     LessonStruct lesson;
     lesson.lessonID = lessonID_;
     int i = 0;
-    if (parts.size() != 12) {
+    if (parts.size() != 13) {
         throw BadRequest();
     }
 
-    for (int i = 1; i < 12; i += 2) {
+    for (int i = 1; i < 13; i += 2) {
         if (parts[i] == "course_id") {
             if (course_exists(parts[i + 1], courses)) {
                 lesson.courseId = parts[i + 1];
@@ -341,11 +340,7 @@ void Post::handle_connect(string line, vector<User*>& users, User*& currentUser,
     }
 
     if (title == "id") {
-
-        if (!can_convert_to_int(userID_)) {
-            throw BadRequest();
-        }
-
+        check_natural_number(userID_);
         if (currentUser->already_connected(userID_)) {
             throw BadRequest();
         }
@@ -393,6 +388,7 @@ void Post::read_post_message(string& line, PostStruct& post)
 {
     size_t i = line.find(DOUBLE_QUOTATION);
     if (i == string::npos) {
+        cout << " DC peyda nashod\n";
         throw BadRequest();
     }
     line = line.substr(i + 1);
@@ -403,6 +399,7 @@ void Post::read_post_message(string& line, PostStruct& post)
 
     i = line.find(DOUBLE_QUOTATION);
     if (i == string::npos) {
+        cout << "dovomi peyda nashod\n";
         throw BadRequest();
     }
     line = line.substr(i + 1);
@@ -411,12 +408,9 @@ void Post::read_post_message(string& line, PostStruct& post)
 void Post::read_post_image(string& line, PostStruct& post)
 {
     size_t i = line.find("image");
-    line = line.substr(i + 5);
-    istringstream iss(line);
-    iss>>post.image;
-
+    line = line.substr(i + 6);
     string format = image_format(line);
-    // i = line.find(format);
+    i = line.find(format);
     string path = line.substr(0, i + format.size());
     post.image = path;
     line = line.substr(i + format.size());
@@ -511,7 +505,6 @@ void Post::handle_message_first(string& line, PostStruct& post)
 
 void Post::handle_image_first(string& line, PostStruct& post)
 {
-
     read_post_image(line, post);
     istringstream iss4(line);
     string second_argument;
@@ -524,7 +517,7 @@ void Post::handle_image_first(string& line, PostStruct& post)
         iss5 >> third_argument;
 
         if (third_argument == "message") {
-            read_post_image(line, post);
+            read_post_message(line, post);
         }
 
         else {
@@ -590,7 +583,7 @@ void Post::handle_profile_photo(string line, vector<User*>& users, User*& curren
 string Post::read_profile_path(string& line)
 {
     size_t i = line.find("photo ");
-    line = line.substr(i + 6);
+    line = line.substr(i + 5);
 
     string format = image_format(line);
     if (format == INVALID_FORMAT) {
@@ -622,7 +615,7 @@ void Post::handle_channel_post(string line, vector<User*>& users, User*& current
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2, PostStruct& post)
 {
     string lessId;
-    size_t pos = line.find(" id ");
+    size_t pos = line.find(" id");
     if (pos == string::npos) {
         throw BadRequest();
     }
@@ -636,14 +629,8 @@ void Post::handle_channel_post(string line, vector<User*>& users, User*& current
     string secondPart = line.substr(pos + lessId.length(), line.length());
 
     line = firstPart + secondPart;
-    if (!can_convert_to_int(lessId)) {
-        throw BadRequest();
-    }
-
-    if (!lesson_exists(stoi(lessId), lessons)) {
-        throw Absence();
-    }
-
+    check_natural_number(lessId);
+    check_lesson_existance(stoi(lessId), lessons);
     Lesson* chosenLesson = find_lesson_by_id(lessons, lessId);
 
     Professor* professor = dynamic_cast<Professor*>(currentUser);
@@ -757,16 +744,18 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
     }
 
     PostStruct formPost;
+    formPost.type = TA_FORM_TYPE;
     Argument first;
     Argument second;
     iss2 >> first.title;
+    iss2 >> first.key;
     if (first.title == "course_id") {
-        iss2 >> first.key;
+        check_natural_number(first.key);
         check_lesson_existance(stoi(first.key), lessons);
-        Lesson* chosenLesson = read_course_id(iss2, second.key, lessons, currentUser);
+        Lesson* chosenLesson = read_course_id(first.key, lessons, currentUser);
+        formPost.lessonId = to_string(chosenLesson->get_lessonID());
         iss2 >> second.title;
         if (second.title == "message") {
-            line = line.substr(line.find("message"));
             read_post_message(line, formPost);
             Professor* prof = dynamic_cast<Professor*>(currentUser);
             formPost.title = FORM_POST_PRE_TITLE + chosenLesson->get_course_name() + FORM_POST_END_TITLE;
@@ -775,7 +764,6 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
             prof->add_ta_form(new TaForm(formPost, chosenLesson));
             Notification TaFormNotif = construct_notif(prof, NEW_FORM_NOTIF);
             prof->send_notif(TaFormNotif);
-            /**********************here need more attention**********************/
             successful_request();
         } else {
             throw BadRequest();
@@ -785,12 +773,15 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
     else if (first.title == "message") {
         line = line.substr(line.find("message"));
         read_post_message(line, formPost);
-        istringstream iss3(line);
-        iss3 >> second.title;
+        iss2 >> second.title;
         if (second.title == "course_id") {
-            iss3 >> second.key;
+            size_t pos = line.find("course_id");
+            line = line.substr(pos + 9);
+            istringstream iss3(line);
+            iss3>>second.key;
+            check_natural_number(second.key);
             check_lesson_existance(stoi(second.key), lessons);
-            Lesson* chosenLesson = read_course_id(iss2, second.key, lessons, currentUser);
+            Lesson* chosenLesson = read_course_id(second.key, lessons, currentUser);
             Professor* prof = dynamic_cast<Professor*>(currentUser);
             formPost.title = FORM_POST_PRE_TITLE + chosenLesson->get_course_name() + FORM_POST_END_TITLE;
             formPost.id = prof->get_postID();
@@ -798,7 +789,6 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
             prof->add_ta_form(new TaForm(formPost, chosenLesson));
             Notification TaFormNotif = construct_notif(prof, NEW_FORM_NOTIF);
             prof->send_notif(TaFormNotif);
-            /**********************here need more attention**********************/
             successful_request();
         } else {
             throw BadRequest();
@@ -810,9 +800,8 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
     }
 }
 
-Lesson* Post::read_course_id(istringstream& iss2, string& id_, vector<Lesson*>& lessons, User*& currentUser)
+Lesson* Post::read_course_id(string& id_, vector<Lesson*>& lessons, User*& currentUser)
 {
-    iss2 >> id_;
     check_natural_number(id_);
     check_lesson_existance(stoi(id_), lessons);
     if (!currentUser->have_this_lesson(stoi(id_))) {
@@ -847,8 +836,7 @@ void Post::handle_closing_ta_form(string line, vector<User*>& users, User*& curr
     iss2 >> id;
     if (title == "id") {
         check_natural_number(id);
-        if (!prof->have_this_post(stoi(id)))
-            throw Absence();
+        check_form_existance(prof, id);
         close_ta_form(prof, users, id);
     } else {
         throw BadRequest();
@@ -892,11 +880,11 @@ void Post::check_is_professor(string profID, vector<User*>& users)
 void Post::check_form_existance(Professor*& prof, string formID)
 {
     if (!prof->have_this_post(stoi(formID))) {
-        throw BadRequest();
+        throw Absence();
     }
 
     if (!prof->have_this_form(stoi(formID))) {
-        throw BadRequest();
+        throw Absence();
     }
 }
 
@@ -930,7 +918,7 @@ void Post::add_new_ta_request(istringstream& iss2, vector<User*>& users, Student
     }
 }
 
-void Post::pre_check_for_ta_request(User* &currentUser)
+void Post::pre_check_for_ta_request(User*& currentUser)
 {
     if (currentUser == nullptr) {
         throw Inaccessibility();
