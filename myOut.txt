@@ -176,8 +176,12 @@ Permission Denied
 Permission Denied
 Not Found
 We have received 1 requests for the teaching assistant position
-810102456 Sarah 5: We have received 2 requests for the teaching assistant position
-810102789 Michael 2: 810102456 Sarah 5: 810102456 Sarah 5: Sarah Williams Electrical Engineering assistant professor Advanced Programming,Web Development
+810102456 Sarah 5: 
+We have received 2 requests for the teaching assistant position
+810102789 Michael 2: 
+810102456 Sarah 5: 
+810102456 Sarah 5: 
+Sarah Williams Electrical Engineering assistant professor Advanced Programming,Web Development
 2 "sacjk"
 OK
 OK

@@ -95,6 +95,7 @@ const char COMMA = ',',
 const char DOUBLE_QUOTATION = '"';
 const string EMPTY = "";
 const string QUESTION_MARK_STRING = "?";
+const string NEW_LINE = "\n";
 
 const string MANAGER_ID = "0";
 const string MANAGER_PASSWORD = "UT_account";

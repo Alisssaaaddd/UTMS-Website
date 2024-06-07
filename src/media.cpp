@@ -46,6 +46,7 @@ void TaForm::take_reply(StudentData& stu)
     while (!reply_found) {
         display_student_data(stu);
         getline(cin, reply);
+        cout << NEW_LINE;
         if (reply == ACCEPT_REPLY) {
             accepted.push_back(stu);
             reply_found = true;
