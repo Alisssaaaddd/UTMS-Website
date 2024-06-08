@@ -88,6 +88,7 @@ void Get::handle_courses(string line, vector<User*>& users, User*& currentUser, 
 {
     string title;
     string key;
+    string end;
     iss2 >> title;
     iss2 >> key;
     if (line == EMPTY || all_is_space(line)) {
@@ -104,6 +105,7 @@ void Get::handle_courses(string line, vector<User*>& users, User*& currentUser, 
             throw BadRequest();
         }
     }
+    check_next_is_nothing(iss2, end);
 }
 
 void Get::handle_personal_page(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
@@ -111,9 +113,10 @@ void Get::handle_personal_page(string line, vector<User*>& users, User*& current
 {
     string title;
     string key;
+    string end;
     iss2 >> title;
     iss2 >> key;
-check_user_loged_in(currentUser);
+    check_user_loged_in(currentUser);
 
     if (line == EMPTY || all_is_space(line)) {
         throw BadRequest();
@@ -131,6 +134,7 @@ check_user_loged_in(currentUser);
             throw BadRequest();
         }
     }
+    check_next_is_nothing(iss2, end);
 }
 
 void Get::handle_my_courses(string line, vector<User*>& users, User*& currentUser, int& lessonID_,
@@ -140,7 +144,7 @@ void Get::handle_my_courses(string line, vector<User*>& users, User*& currentUse
         throw BadRequest();
     }
 
-check_user_loged_in(currentUser);
+    check_user_loged_in(currentUser);
 
     if (currentUser->no_active_lessons()) {
         throw EmptyException();
@@ -234,12 +238,9 @@ void Get::handle_course_post(string line, vector<User*>& users, User*& currentUs
     vector<Lesson*>& lessons, vector<Course*>& courses, vector<Major*>& majors, istringstream& iss2)
 {
     check_user_loged_in(currentUser);
-
-    Manager* admin = dynamic_cast<Manager*>(currentUser);
-    if (admin)
-        throw Inaccessibility();
-
+    restrict_admin(currentUser);
     check_next_is_something(line);
+
     string lessId;
     size_t pos = line.find(" id");
     if (pos == string::npos) {

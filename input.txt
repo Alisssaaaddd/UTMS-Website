@@ -109,20 +109,20 @@ GET personal_page ? id 810420436
 GET post ? id 810420436 post_id 1
 GET post ? id 810420436 post_id 2
 GET post ? id 810420436 post_id 3
-POST ta_request ? professor_id 810420436 form_id 4
-POST ta_request ? professor_id 810420436 form_id 3
-POST ta_request ? professor_id 810420436 form_id 2
-POST ta_request ? professor_id 810420436 form_id 1
-POST ta_request ? professor_id 810102123 form_id 2
-POST ta_request ? professor_id 810102123 form_id 1
-POST ta_request ? professor_id 810420434 form_id 2
-POST ta_request ? professor_id 810420434 form_id 1
+POST ta_request ? form_id 4 professor_id 810420436
+POST ta_request ? form_id 3 professor_id 810420436
+POST ta_request ? form_id 2 professor_id 810420436 
+POST ta_request ? form_id 1 professor_id 810420436
+POST ta_request ? form_id 2 professor_id 810102123
+POST ta_request ? form_id 1 professor_id 810102123
+POST ta_request ? form_id 2 professor_id 810420434
+POST ta_request ? form_id 1 professor_id 810420434 
 POST logout ?
 POST login ? password randompass2 id 810102456
-POST ta_request ? professor_id 810420436 form_id 4
-POST ta_request ? professor_id 810420436 form_id 3
-POST ta_request ? professor_id 810420436 form_id 2
-POST ta_request ? professor_id 810420436 form_id 1
+POST ta_request ? form_id 4 professor_id 810420436 
+POST ta_request ? form_id 3 professor_id 810420436
+POST ta_request ? form_id 2 professor_id 810420436
+POST ta_request ? form_id 1 professor_id 810420436 
 POST logout ?
 POST login ? password jkl012 id 810420436
 POST ta_request ? professor_id 810420436 form_id 4

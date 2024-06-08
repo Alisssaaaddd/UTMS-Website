@@ -729,10 +729,7 @@ void Post::handle_ta_form(string line, vector<User*>& users, User*& currentUser,
 {
     check_user_loged_in(currentUser);
     restrict_admin(currentUser);
-    Student* student = dynamic_cast<Student*>(currentUser);
-    if (student) {
-        throw Inaccessibility();
-    }
+    restrict_students(currentUser);
 
     PostStruct formPost;
     formPost.type = TA_FORM_TYPE;
@@ -802,15 +799,20 @@ void Post::handle_ta_request(string line, vector<User*>& users, User*& currentUs
     pre_check_for_ta_request(currentUser);
     Student* student = dynamic_cast<Student*>(currentUser);
 
-    string first_argument;
-    iss2 >> first_argument;
-    if (first_argument == "professor_id") {
-        add_new_ta_request(iss2, users, student);
-    }
-
-    else {
+    string profId;
+    size_t pos = line.find(" professor_id");
+    if (pos == string::npos) {
         throw BadRequest();
     }
+    string tempLine = line.substr(pos + 14);
+    istringstream tempIss(tempLine);
+    tempIss >> profId;
+    check_natural_number(profId);
+    string firstPart = line.substr(0, pos);
+    string secondPart = line.substr(pos + profId.length() + 14, line.length());
+    line = firstPart + secondPart;
+    istringstream iss(line);
+    add_new_ta_request(iss,profId, users, student);
 }
 
 void Post::check_is_professor(string profID, vector<User*>& users)
@@ -831,20 +833,18 @@ void Post::check_form_existance(Professor*& prof, string formID)
     }
 }
 
-void Post::add_new_ta_request(istringstream& iss2, vector<User*>& users, Student*& student)
+void Post::add_new_ta_request(istringstream& iss,string &profID, vector<User*>& users, Student*& student)
 {
-    string profID;
-    iss2 >> profID;
     check_natural_number(profID);
     check_is_professor(profID, users);
     User* u = find_user_by_id(profID, users);
     Professor* prof = dynamic_cast<Professor*>(u);
 
     string second_argument;
-    iss2 >> second_argument;
+    iss >> second_argument;
     if (second_argument == "form_id") {
         string formID;
-        iss2 >> formID;
+        iss >> formID;
         check_natural_number(formID);
         check_form_existance(prof, formID);
         TaForm* taForm = prof->find_ta_form_by_id(stoi(formID));
@@ -864,9 +864,7 @@ void Post::add_new_ta_request(istringstream& iss2, vector<User*>& users, Student
 void Post::pre_check_for_ta_request(User*& currentUser)
 {
     check_user_loged_in(currentUser);
-
     restrict_admin(currentUser);
-
     Professor* prof = dynamic_cast<Professor*>(currentUser);
     if (prof) {
         throw Inaccessibility();

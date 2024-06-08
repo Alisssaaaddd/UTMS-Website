@@ -68,7 +68,7 @@ public:
     void close_ta_form(Professor*& prof, vector<User*>& users, string id);
     void check_is_professor(string profID, vector<User*>& users);
     void check_form_existance(Professor*& prof, string formID);
-    void add_new_ta_request(istringstream& iss2, vector<User*>& users, Student*& student);
+    void add_new_ta_request(istringstream& iss2, string& profID, vector<User*>& users, Student*& student);
     void pre_check_for_ta_request(User*& currentUser);
     void read_course_id_for_course_offer(vector<Course*>& courses, LessonStruct& lesson, string& nextPart);
     void read_professor_id_for_course_offer(string& nextPart, LessonStruct& lesson, vector<User*>& users);
