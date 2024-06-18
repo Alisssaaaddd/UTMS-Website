@@ -1,10 +1,10 @@
 #include "../includes/website.hpp"
 
-Website::Website(char *majorsFile, char *studentsFile,
-                 char *coursesFile, char *professorsFile)
+Website::Website(char* majorsFile, char* studentsFile,
+    char* coursesFile, char* professorsFile)
 {
     read_files(majorsFile, studentsFile,
-               coursesFile, professorsFile);
+        coursesFile, professorsFile);
     methods.push_back(new Post());
     methods.push_back(new Put());
     methods.push_back(new Get());
@@ -17,121 +17,105 @@ Website::Website(char *majorsFile, char *studentsFile,
 
 Website::~Website()
 {
-    for(auto u: users) delete u;
-    for(auto c: courses) delete c;
-    for(auto m: majors) delete m;
-    for(auto l: lessons) delete l;
+    for (auto u : users)
+        delete u;
+    for (auto c : courses)
+        delete c;
+    for (auto m : majors)
+        delete m;
+    for (auto l : lessons)
+        delete l;
 }
 
 void Website::import()
 {
     string line;
-    while (getline(cin, line))
-    {
+    while (getline(cin, line)) {
         istringstream iss(line);
         identify_method(line);
-        if(exit) break;
+        if (exit)
+            break;
     }
 }
 
-void Website::identify_method(string &line)
+void Website::identify_method(string& line)
 {
     istringstream iss(line);
     string method;
     iss >> method;
     size_t i = line.find(method);
 
-    if (i != string::npos)
-    {
+    if (i != string::npos) {
         line = line.substr(i + method.length());
-        while (!line.empty() && line[0] == SPACE)
-        {
+        while (!line.empty() && line[0] == SPACE) {
             line = line.substr(1);
         }
     }
 
-    try
-    {
-        if (method == "GET")
-        {
-            for (auto m : methods)
-            {
-                Get *g = dynamic_cast<Get *>(m);
-                if (g)
-                {
+    try {
+        if (method == "GET") {
+            for (auto m : methods) {
+                Get* g = dynamic_cast<Get*>(m);
+                if (g) {
                     g->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
 
-        else if (method == "POST")
-        {
-            for (auto m : methods)
-            {
-                Post *post = dynamic_cast<Post *>(m);
-                if (post)
-                {
+        else if (method == "POST") {
+            for (auto m : methods) {
+                Post* post = dynamic_cast<Post*>(m);
+                if (post) {
                     post->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
 
-        else if (method == "DELETE")
-        {
-            for (auto m : methods)
-            {
-                Delete *del = dynamic_cast<Delete *>(m);
-                if (del)
-                {
+        else if (method == "DELETE") {
+            for (auto m : methods) {
+                Delete* del = dynamic_cast<Delete*>(m);
+                if (del) {
                     del->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
 
-        else if (method == "PUT")
-        {
-            for (auto m : methods)
-            {
-                Put *put = dynamic_cast<Put *>(m);
-                if (put)
-                {
+        else if (method == "PUT") {
+            for (auto m : methods) {
+                Put* put = dynamic_cast<Put*>(m);
+                if (put) {
                     put->identify_command(line, users, currentUser, lessonId_current, lessons, courses, majors);
                 }
             }
         }
 
-        else if (method == "QUIT"){
+        else if (method == "QUIT") {
             exit = true;
         }
 
-        else
-        {
+        else {
             throw BadRequest();
         }
     }
 
-    catch (BadRequest &br)
-    {
+    catch (BadRequest& br) {
         cerr << br.what() << endl;
     }
 
-    catch (Absence &a)
-    {
+    catch (Absence& a) {
         cerr << a.what() << endl;
     }
 
-    catch (EmptyException &ee)
-    {
+    catch (EmptyException& ee) {
         cerr << ee.what() << endl;
     }
 
-    catch (Inaccessibility &ie)
-    {
+    catch (Inaccessibility& ie) {
         cerr << ie.what() << endl;
     }
 }
 
-void Website::read_majors(char *majorsFileName)
+void Website::read_majors(char* majorsFileName)
 {
     ifstream majorsFile(majorsFileName);
     if (!majorsFile.is_open())
@@ -139,8 +123,7 @@ void Website::read_majors(char *majorsFileName)
     MD major;
     string line;
     getline(majorsFile, line);
-    while (getline(majorsFile, line))
-    {
+    while (getline(majorsFile, line)) {
         istringstream iss(line);
         string token;
 
@@ -154,7 +137,7 @@ void Website::read_majors(char *majorsFileName)
     }
 }
 
-void Website::read_students(char *studentsFileName)
+void Website::read_students(char* studentsFileName)
 {
     ifstream studentsFile(studentsFileName);
     if (!studentsFile.is_open())
@@ -162,8 +145,7 @@ void Website::read_students(char *studentsFileName)
     SD student;
     string line;
     getline(studentsFile, line);
-    while (getline(studentsFile, line))
-    {
+    while (getline(studentsFile, line)) {
         istringstream iss(line);
         string token;
 
@@ -187,7 +169,7 @@ void Website::read_students(char *studentsFileName)
     }
 }
 
-void Website::read_courses(char *coursesFileName)
+void Website::read_courses(char* coursesFileName)
 {
     ifstream coursesFile(coursesFileName);
     if (!coursesFile.is_open())
@@ -195,8 +177,7 @@ void Website::read_courses(char *coursesFileName)
     CD course;
     string line;
     getline(coursesFile, line);
-    while (getline(coursesFile, line))
-    {
+    while (getline(coursesFile, line)) {
         istringstream iss(line);
         string token;
 
@@ -219,7 +200,7 @@ void Website::read_courses(char *coursesFileName)
     }
 }
 
-void Website::read_professors(char *professorsFileName)
+void Website::read_professors(char* professorsFileName)
 {
     ifstream professorsFile(professorsFileName);
     if (!professorsFile.is_open())
@@ -227,8 +208,7 @@ void Website::read_professors(char *professorsFileName)
     PD prof;
     string line;
     getline(professorsFile, line);
-    while (getline(professorsFile, line))
-    {
+    while (getline(professorsFile, line)) {
         istringstream iss(line);
         string token;
 
@@ -252,14 +232,13 @@ void Website::read_professors(char *professorsFileName)
     }
 }
 
-vector<string> Website::split(const string &str, const char delim)
+vector<string> Website::split(const string& str, const char delim)
 {
     vector<string> strings;
     string::size_type pos = 0;
     string::size_type prev = 0;
 
-    while ((pos = str.find(delim, prev)) != string::npos)
-    {
+    while ((pos = str.find(delim, prev)) != string::npos) {
         strings.push_back(str.substr(prev, pos - prev));
         prev = pos + sizeof(char);
     }
@@ -267,8 +246,8 @@ vector<string> Website::split(const string &str, const char delim)
     return strings;
 }
 
-void Website::read_files(char *majorsFile, char *studentsFile,
-                         char *coursesFile, char *professorsFile)
+void Website::read_files(char* majorsFile, char* studentsFile,
+    char* coursesFile, char* professorsFile)
 {
     read_majors(majorsFile);
     read_students(studentsFile);
@@ -279,13 +258,53 @@ void Website::read_files(char *majorsFile, char *studentsFile,
 MD Website::find_MajorData_by_id(string userMajorId)
 {
     MD major;
-    for (Major *m : majors)
-    {
-        if (m->get_MID() == userMajorId)
-        {
+    for (Major* m : majors) {
+        if (m->get_MID() == userMajorId) {
             major.MID = m->get_MID();
             major.name = m->get_name();
         }
     }
     return major;
 }
+
+Post* Website::call_post_method()
+{
+    for (auto m : methods) {
+        Post* post = dynamic_cast<Post*>(m);
+        if (post)
+            return post;
+    }
+}
+
+Get* Website::call_get_method()
+{
+    for (auto m : methods) {
+        Get* get = dynamic_cast<Get*>(m);
+        if (get)
+            return get;
+    }
+}
+
+Delete* Website::call_delete_method()
+{
+    for (auto m : methods) {
+        Delete* del = dynamic_cast<Delete*>(m);
+        if (del)
+            return del;
+    }
+}
+
+Put* Website::call_put_method()
+{
+    for (auto m : methods) {
+        Put* put = dynamic_cast<Put*>(put);
+        if (put)
+            return put;
+    }
+}
+
+vector<User*> Website::get_users(){return users;};
+vector<Lesson*> Website::get_lessons(){return lessons;};
+vector<Course*> Website::get_courses(){return courses;};
+vector<Major*> Website::get_majors(){return majors;};
+User* Website::get_currentUser(){return currentUser;};

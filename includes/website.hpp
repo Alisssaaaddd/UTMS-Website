@@ -38,4 +38,13 @@ public:
     vector<string> split(const string &str, const char delim);
     void identify_method(string &method);
     MD find_MajorData_by_id(string userMajorId);
+    Post* call_post_method();
+    Get* call_get_method();
+    Delete* call_delete_method();
+    Put* call_put_method();
+    vector<User*> get_users();
+    vector<Lesson*> get_lessons();
+    vector<Course*> get_courses();
+    vector<Major*> get_majors();
+    User* get_currentUser();
 };

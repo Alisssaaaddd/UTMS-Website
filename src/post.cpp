@@ -9,16 +9,16 @@ Post::~Post()
 {
 }
 
-void Post::login(Argument id, Argument password, vector<User*>& users, User*& currentUser)
+void Post::login(string id, string password, vector<User*>& users, User*& currentUser)
 {
-    bool id_found = user_exists(id.key, users);
+    bool id_found = user_exists(id, users);
     if (!id_found) {
         throw Absence();
     }
 
-    User* chosenUser = find_user_by_id(id.key, users);
+    User* chosenUser = find_user_by_id(id, users);
 
-    if (chosenUser->get_password() != password.key) {
+    if (chosenUser->get_password() != password) {
         throw Inaccessibility();
     }
 
@@ -336,7 +336,7 @@ void Post::handle_login(string line, vector<User*>& users, User*& currentUser, i
         throw BadRequest();
     }
 
-    login(id, password, users, currentUser);
+    login(id.key, password.key, users, currentUser);
 }
 
 void Post::handle_connect(string line, vector<User*>& users, User*& currentUser, int& lessonID_,

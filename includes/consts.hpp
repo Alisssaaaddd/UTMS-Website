@@ -6,6 +6,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -118,6 +119,8 @@ const string ORD_POST_TYPE = "ordinary";
 const string TA_FORM_TYPE = "ta_form";
 const string REJECT_REPLY = "reject";
 const string ACCEPT_REPLY = "accept";
+const string SERVER_ON_PORT = "Server running on port: ";
+const int PORT_NUM = 5000;
 
 const vector<string> SUPPORTED_FORMATS = { ".jpg", ".JPG", ".GIF", ".gif", ".JPEG", ".jpeg",
     ".PNG", ".png", ".WEBP", ".webp", ".XPS", ".xps", ".tiff", ".TIFF", ".svg", ".SVG" };
